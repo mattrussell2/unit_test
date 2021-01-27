@@ -16,7 +16,7 @@ instructions.
 
 Somewhere on the homework server, run:
 
-vm-hw01{utln}1001: git clone git@gitlab.cs.tufts.edu:mrussell/unit_test
+vm-hw01{utln}1001: git clone https://www.github.com/mattrussell2/unit_test
 vm-hw01{utln}1002: cd unit_test
 vm-hw01{utln}1003: chmod u+x setup
 vm-hw01{utln}1004: ./setup
