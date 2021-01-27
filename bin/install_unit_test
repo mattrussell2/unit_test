@@ -1,0 +1,15 @@
+#!/bin/bash
+# install_unit_test
+# Matt Russell
+# 12/16/2020
+
+# adds an alias to the user's ~/.cshrc file
+# the alias points 'unit_test' to the installation directory
+
+echo "alias unit_test /comp/15/bin/unit_test"  >> ~/.cshrc
+
+echo "Done!"
+
+echo "Note: this step creates an alias in your ~/.cshrc file in the tcsh style. If you are using bash, please open ~/.bashrc and change the command to: alias unit_test='/comp/15/bin/unit_test'"
+
+echo "After this script runs, please run: source ~/.cshrc (or ~/.bashrc), and then use unit_test!"

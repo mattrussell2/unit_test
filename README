@@ -1,0 +1,121 @@
+unit_test
+matt russell
+comp15 2020 summer
+updated 12/11/2020
+
+unit_test - a frictionless C++ unit testing framework.
+
+Note that the instructions are for use on the Tufts CS server, however unit_test
+can be installed on your local system without issue. Simply use your own 
+Python3.7 directory and edit ~/.cshrc or ~/.bashrc as indicated in the
+instructions. 
+
+-----------------------------------------------------------------------------
+                Instructions for initial TA/Faculty set up
+------------------------------------------------------------------------------
+
+Somewhere on the homework server, run:
+
+vm-hw01{utln}1001: git clone git@gitlab.cs.tufts.edu:mrussell/unit_test
+vm-hw01{utln}1002: cd unit_test
+vm-hw01{utln}1003: chmod u+x setup
+vm-hw01{utln}1004: ./setup
+
+You will be asked for the following:
+
+    1) Python3.7 location       (Note: default is /g/15/2020uc/support/bin/python3.7)* 
+    2) location for scripts     (Note: default is /comp/15/bin)**
+    3) location for lib file(s) (Note: default is /comp/15/lib)**
+
+*A working Python3.7 executable does live in that directory on the cs server; it
+ will be available for 'all time', so please feel free to use the default! If
+ you're on a local system, clearly you'll need a different path.
+
+**If you want to set this up for personal use, rather than for the whole course
+use something other than /comp/15/bin and /comp/15/lib.
+
+Great! The unit testing framework is now set up. To actually run unit_test,
+running the install script is still needed. The setup scrupt will ask you if
+you'd like to do this. If you decline by accident, simply follow the steps below
+------------------------------------------------------------------------------
+                  Instructions for student installation
+------------------------------------------------------------------------------
+
+For students to install unit_test, they must run the install script
+
+    /comp/15/bin/install_unit_test    
+
+(replace /comp/15/bin with the /bin path specified during initial setup)
+
+NOTE: do NOT use the install_unit_test located in the bin of this directory. 
+NOTE: you CAN use the install_unit_test located in the 'build' directory.
+
+After running the script, they should restart their shell,
+or run: source ~/.cshrc
+
+
+------------------------------------------------------------------------------
+                    Instructions to run unit tests
+------------------------------------------------------------------------------
+
+To see the system in action:
+   go to examples/
+   run the command: unit_test (note: no './')
+
+If installation has worked, tests should run. If things fail immediately,
+confirm that all parhs were entered correctly, and that source ~/.cshrc was run
+
+Note that the provided example has bugs, so the tests will not succeed. 
+
+For other projects, adapt the Makefile and example_tests.cpp files.
+
+See those files for details on how to update them.
+
+Making the example files available to students is probably a good idea, but is
+not done automatically during initialization
+
+
+------------------------------------------------------------------------------
+                      Notes for the brave of heart
+------------------------------------------------------------------------------
+
+There are a two key phases of this script: 
+
+1) Initilize Autograding Files
+2) Compile and Run (and Run Valgrind on) all test cases
+
+The script also keeps track of student score, and prints results during runtime
+
+Initialization: 
+
+    This program works by leveraging an originally incomplete driver located at:
+
+    lib/unit_test_driver.cpp
+
+    It first copies this incomplete driver to the student's working directory.
+
+    Then, it parses all files in the student's working directory with the suffix:
+
+    	     '_tests.cpp'
+
+    Specifically, for each such file, the script discovers all of the functions that have:
+        1) a void return type
+        2) no input arguments
+
+    For each function, the script:
+        1) Adds a forward declaration to the copied driver file. 
+        2) Inserts a string in the driver file of the following format:
+          
+            { "test_function_name": test_function_name },\n
+
+    This pair is inserted in the initialization of a std::map<std::string, FnPtr>> object,
+    where "FnPtr" is a typdef of a void function that takes no arguments.
+
+Compilation and Running:
+
+    This code is relatively straightforward. After compilation, Python makes subprocess calls 
+    to the compiled binary, passing in a testname as an argument.
+
+    Valgrind is run automatically on all tests, and pass/fail results are displayed. 
+
+    Passes / failures are kept track of; all results are printed to the terminal. 
