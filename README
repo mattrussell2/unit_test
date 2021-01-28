@@ -53,6 +53,10 @@ NOTE: you CAN use the install_unit_test located in the 'build' directory.
 After running the script, they should restart their shell,
 or run: source ~/.cshrc
 
+(Note: This script simply places the command to add the installation bin
+into the path of the person running the script on login. Feel free to do this
+yourself however you see fit! The idea is to be able to run unit_test from 
+your current working directory)
 
 ------------------------------------------------------------------------------
                     Instructions to run unit tests
