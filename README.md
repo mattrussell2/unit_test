@@ -2,6 +2,14 @@
 # unit_test - a frictionless C++ unit testing framework.
 By Matt Russell
 
+```cpp
+int main(){
+    return 0;
+}
+
+```
+
+
 ## prerequisites 
 
 unit_test requires Python >= 3.7, clang++, and valgrind
