@@ -18,7 +18,7 @@ class Foo {
 };
 ```
 
-Here is the unit testing file for Foo 
+With unit_test, here's a test file for Foo. 
 
 ```cpp
 /*
