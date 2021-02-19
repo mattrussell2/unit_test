@@ -2,6 +2,7 @@
 # unit_test - a frictionless C++ unit testing framework.
 By Matt Russell
 
+Let's assume we want to test a simple ArrayList class. 
 
 ```cpp
 /*
@@ -22,6 +23,8 @@ class ArrayList(){
 };
 
 ```
+
+unit tests for the class. 
 
 ```cpp
 /*
@@ -65,6 +68,9 @@ void third_size_test(){
 
 ```
 
+unit_test output
+
+
 
 
 ## prerequisites 
@@ -75,11 +81,17 @@ unit_test requires Python >= 3.7, clang++, and valgrind
 
     git clone https://www.github.com/mattrussell2/unit_test
     cd unit_test
-    chmod u+x unit_test
+    chmod a+x unit_test
 
-Copy the unit_test file to any location on your $PATH
+Copy the unit_test file to any location on your $PATH.
+
+Assuming you're an administrator, and running Linux/Unix, for example: 
     
-Great! The unit testing framework is now set up. 
+    sudo cp unit_test /usr/local/bin/
+    
+If not, you can always create an alias for unit_test in .bashrc or .profile
+
+    alias /home/username/unit_test unit_test
 
 ## usage
 
