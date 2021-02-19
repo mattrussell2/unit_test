@@ -1,26 +1,14 @@
 unit_test
 matt russell
 comp15 2020 summer
-updated 12/11/2020
+#unit_test - a frictionless C++ unit testing framework.
 
-unit_test - a frictionless C++ unit testing framework.
+##installation
 
-Note that the instructions are for use on the Tufts CS server, however unit_test
-can be installed on your local system without issue. Simply use your own 
-Python3.7 directory and edit ~/.cshrc or ~/.bashrc as indicated in the
-instructions. 
-
------------------------------------------------------------------------------
-                Instructions for initial TA/Faculty set up
-------------------------------------------------------------------------------
-
-Somewhere on the homework server, run:
-
-vm-hw01{utln}1001: git clone https://www.github.com/mattrussell2/unit_test
-vm-hw01{utln}1002: cd unit_test
-vm-hw01{utln}1003: chmod u+x setup
-vm-hw01{utln}1004: ./setup
-
+  git clone https://www.github.com/mattrussell2/unit_test
+  cd unit_test
+  
+ 
 You will be asked for the following:
 
     1) Python3.7 location       (Note: default is /g/15/2020uc/support/bin/python3.7)* 
