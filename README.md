@@ -19,11 +19,12 @@ Great! The unit testing framework is now set up.
 ## usage
 
 To see the system in action:  
-   go to examples/  
-   run unit_test   
-   
+
+    cd examples
+    unit_test
+    
 If the command fails, ensure that unit_test is in a folder on your $PATH, and 
-that it is marked as executable. 
+that it is user-executable. 
 
 Note that the examples contain bugs on purpose, so not all tests will pass!
 
