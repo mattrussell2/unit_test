@@ -11,9 +11,9 @@ class Foo {
  public:
   Foo() {};
   ~Foo() {};
-  void operator+(const Foo& other) { this->value += other.value; };
-  void set(int x)                  { this->value = x;            };
-  int get()                        { return this->value;         };
+
+  void set(int x) { this->value = x;    };
+  int  get()      { return this->value; };
   
  private:
   int value; 
