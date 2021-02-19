@@ -128,17 +128,18 @@ Each test, even accross multiple testing files, must have a unique name.
 
 ### Makefile
 unit_test requires a Makefile with a target named 'unit_test', which must require a file
-unit_test_driver.cpp, and which will build an executable 'a.out'. 
+main.cpp, and which will build an executable 'a.out'. 
 
 For example, the Makefile rule to test the Foo class with unit_test could be:
 
-  unit_test: unit_test_driver.cpp Foo_tests.cpp Foo.h
-        clang++ unit_test_driver.cpp Foo_tests.cpp
+  unit_test: main.cpp Foo_tests.cpp Foo.h
+        clang++ main.cpp Foo_tests.cpp
 
 **NOTE** 
-The file unit_test_driver.cpp is created for you by unit_test - this file has the testing 
+The file main.cpp is created for you by unit_test - this file has the testing 
 program's main(), so there is no need for you to write a main. Instead, think of your test
-functions as each being its own main. 
+functions as each being its own main. When using unit_test, you do **NOT** need to run 'make', 
+create main.cpp, or create a main(). 
 
 ## testing notes
 A test is considered upon successful execution of the test function. 
@@ -164,7 +165,7 @@ for each test function:
 Each pair is inserted in the driver file text as part of the initialization of a std::map<std::string, FnPtr>> object, where "FnPtr" is a typdef of a 
 pointer to a void function that takes no arguments.
 
-The driver file, unit_test_driver.cpp, is then saved in the current working directory.
+The driver file, main.cpp, is then saved in the current working directory.
 
 Then the files are compiled in accordance with the Makefile, and a.out is run 
 one time for each test via the Python subprocess module. 
