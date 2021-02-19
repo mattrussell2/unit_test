@@ -54,9 +54,8 @@ If not, you can always create an alias for unit_test in .bashrc or .profile
 
     alias unit_test="/home/username/unit_test"
 
-## usage
 
-To see the system in action:  
+To see this demo in action:  
 
     cd examples
     unit_test
@@ -64,7 +63,32 @@ To see the system in action:
 If the command fails, ensure that unit_test is in a folder on your $PATH, and 
 that it is user-executable. 
 
-Note that the examples contain bugs on purpose, so not all tests will pass!
+## usage
+
+### file requirements
+unit_test requires:
+
+1) A testing file of the form XX_tests.cpp to be in your current working directory
+2) A Makefile which requires a file unit_test_driver.cpp, and which will build an executable 'a.out'. 
+
+The file unit_test_driver.cpp is created for you by unit_test - this file has the testing 
+program's main(), so there is no need for you to write a main. Instead, think of your test
+functions as each being its own main. 
+
+### test requirements
+
+Each test must be a function which has
+  1) a void return type
+  2) no input arguments
+
+
+A test is considered upon successful execution of the test function. 
+
+It is suggested that you use assert in your tests, however this is not required. 
+
+Each test will be run with valgrind immediately after the test is run. 
+
+Any test that fails will fail valgrind by default. 
 
 ## implementation details 
 
