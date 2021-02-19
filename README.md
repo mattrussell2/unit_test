@@ -32,7 +32,7 @@ void set_get() {
 ```
 And the output of unit_test
 
-<img src="https://www.cs.tufts.edu/~mrussell/unit_test_output.jpg">
+<img src="https://www.cs.tufts.edu/~mrussell/unit_test_output.jpg" style="width:75%">
 
 ## prerequisites 
 
