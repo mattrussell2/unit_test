@@ -158,7 +158,7 @@ Let's go ahead and introduce a memory leak in the constructor!
  */
 class Foo {
  public:
-  Foo()  { int *x = new int[100] };
+  Foo()  { int *x = new int[100]; };
   ~Foo() {};
   
   void set(int x) { this->value = x;    };
