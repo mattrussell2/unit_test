@@ -265,7 +265,7 @@ results
 matt:example$ 
 ```
 
-Let's fix the memory leak, but use a print statements to help catch our bug.
+Let's fix the memory leak, and use a print statements to help catch our other bug.
 ```cpp
 /*
  * Foo.h
