@@ -36,7 +36,7 @@ And the output of unit_test
 
 ## prerequisites 
 
-unit_test requires Python >= 3.7, clang++, and valgrind
+unit_test requires Python >= 3.7 and valgrind
 
 ## installation
 
@@ -53,7 +53,6 @@ Assuming you're an administrator, and running Linux/Unix, for example:
 If not, you can always create an alias for unit_test in .bashrc or .profile
 
     alias unit_test="/home/username/unit_test"
-
 
 To see this demo in action:  
 
