@@ -9,9 +9,9 @@ class Foo {
  public:
   Foo() {};
   ~Foo() {};
-
-  void set(int x) { this->value = x; };
-  int  get()      { return this->value; };
+  void operator+(const Foo &x) { this->value += x; }; 
+  void set(int x)              { this->value = x; };
+  int  get()                   { return this->value; };
   
  private:
   int value; 
@@ -36,6 +36,14 @@ void set_get() {
   Foo f; 
   f.set(10); 
   assert(f.get() == 10); 
+  
+void eqls_op() {
+  Foo f; 
+  f.set(3); 
+  Foo g; 
+  g.set(4); 
+  assert(f != g); 
+  assert(f == f); 
 }   
 ```
 And the output of unit_test
