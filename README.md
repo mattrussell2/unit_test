@@ -2,74 +2,43 @@
 # unit_test - a frictionless C++ unit testing framework.
 By Matt Russell
 
-Let's assume we want to test a simple ArrayList class. 
+Let's assume we want to test the following class Foo. 
 
 ```cpp
-/*
- * ArrayList.h
- */
+class Foo {
+ public:
+  Foo() {};
+  ~Foo() {};
 
-class ArrayList(){
-  public:
-    ArrayList();
-    ~ArrayList();
-
-    void getSize(); 
-    void pushBack(int);
-    void popBack(int);
-    
-    ...
-    
+  void set(int x) { this->value = x; };
+  int  get()      { return this->value; };
+  
+ private:
+  int value; 
 };
-
 ```
 
-unit tests for the class. 
+Here are unit tests for the class. 
 
 ```cpp
-/*
- * ArrayList_tests.cpp
- */
- 
-#include <iostream>
-#include "ArrayList.h"
+#include <cassert>
+#include "Foo.h"
 
-void first_size_test(){
-    ArrayList list; 
-    assert(list.size() == 0);
-    list.push_back(1); 
-    assert(list.size() == 1); 
-    list.push_back(2);
-    assert(list.size() == 2); 
+void constructor() {
+  Foo f; 
 }
 
-void scnd_size_test(){
-    ArrayList list; 
-    for (int i = 0; i < 100; i++)
-    { 
-        assert(list.size() == i); 
-        list.pushBack(i); 
-    }
+void set_get() {
+  Foo f; 
+  f.set(10); 
+  assert(f.get() == 10); 
 }   
-
-void third_size_test(){
-    ArrayList list; 
-    for (int i = 0; i < 100; i++)
-    { 
-        assert(list.size() == i); 
-        list.popBack(i); 
-    }
-    
-    for (int i = 100; i > 0; i--){
-        assert(list.size() == i); 
-        list.popBack(i);
-    }
-}   
-
 ```
 
-```bash
-unit_test output
+And the output of running unit_test
+
+```
+matt:example$ unit_test
 
 setting up tests
 -----------------------------------
