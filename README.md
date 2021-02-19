@@ -40,7 +40,7 @@ And the output of running unit_test
 matt:example$ unit_test
 
 
-<span style="color:blue">setting up tests</span>
+<p style="color:blue">setting up tests</p>
 -----------------------------------
 <span style="color:green">tests were set up successfully</span>
 
