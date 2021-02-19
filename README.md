@@ -9,8 +9,8 @@ class Foo {
  public:
   Foo() {};
   ~Foo() {};
-  void operator+(const Foo &x) { this->value += x; }; 
-  void set(int x)              { this->value = x; };
+  void operator+(const Foo &x) { this->value += x;   }; 
+  void set(int x)              { this->value = x;    };
   int  get()                   { return this->value; };
   
  private:
