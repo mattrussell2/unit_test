@@ -1,7 +1,3 @@
-
-# unit_test - a frictionless C++ unit testing framework.
-By Matt Russell
-
 Let's assume we want to test the following class Foo. 
 
 ```cpp
