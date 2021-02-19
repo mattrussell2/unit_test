@@ -291,6 +291,7 @@ class Foo {
   int value; 
 };
 ```
+cout and cerr, if they contain any data, will be printed to the terminal.
 ```
 matt:example$ unit_test
 
