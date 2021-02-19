@@ -135,7 +135,7 @@ test failed
 valgrind failed by default
 stderr
 ------
-a.out: Foo_tests.cpp:27: void set_get(): Assertion `f.get() == 10' failed.
+a.out: Foo_tests.cpp:27: void set_and_get(): Assertion `f.get() == 10' failed.
 
 
 
