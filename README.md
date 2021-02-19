@@ -78,7 +78,7 @@ functions as each being its own main.
 ### test requirements
 
 Each test must be a function which has
-  1) a void return type
+  1) a void return type  
   2) no input arguments
 
 
@@ -90,11 +90,11 @@ Each test will be run with valgrind immediately after the test is run.
 
 Any test that fails will fail valgrind by default. 
 
-## implementation details 
+## unit_test implementation details 
 
 There are a two key phases of this script: 
 
-1) initilize unit_test_driver.cpp
+1) initilize unit_test_driver.cpp  
 2) compile, run, and run valgrind on all tests cases
 
 ### initialization
