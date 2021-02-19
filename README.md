@@ -9,9 +9,9 @@ class Foo {
  public:
   Foo() {};
   ~Foo() {};
-  void operator+(const Foo &other) { this->value += other.value; }; 
-  void set(int x)                  { this->value = x;            };
-  int  get()                       { return this->value;         };
+  
+  void set(int x) { this->value = x;    };
+  int  get()      { return this->value; };
   
  private:
   int value; 
@@ -32,23 +32,56 @@ void constructor() {
   Foo f; 
 }
 
+void set_test() {
+  Foo f; 
+  f.set(10); 
+}
+
 void set_get() {
   Foo f; 
   f.set(10); 
   assert(f.get() == 10); 
-  
-void eqls_op() {
-  Foo f; 
-  f.set(3); 
-  Foo g; 
-  g.set(4); 
-  assert(f != g); 
-  assert(f == f); 
-}   
+}
 ```
-And the output of unit_test
+And the output of unit_test:
 
-<img src="https://www.cs.tufts.edu/~mrussell/unit_test_output.jpg" style="width:75%">
+```
+matt:example$ unit_test
+
+
+setting up tests
+-----------------------------------
+tests were set up successfully
+
+
+compiling tests
+-----------------------------------
+compilation passed
+
+
+constructor
+-----------------------------------
+test passed
+valgrind passed
+
+
+set test
+-----------------------------------
+test passed
+valgrind passed
+
+
+set get
+-----------------------------------
+test passed
+valgrind passed
+
+
+results
+-----------------------------------
+3 / 3 tests passed
+3 / 3 valgrind tests passed
+```
 
 ## prerequisites 
 
