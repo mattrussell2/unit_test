@@ -40,29 +40,30 @@ And the output of running unit_test
 ```
 matt:example$ unit_test
 
-setting up tests
+
+<span style="color:blue">setting up tests</span>
 -----------------------------------
-tests were set up successfully
+<span style="color:green">tests were set up successfully</span>
 
 
-compiling tests
+<span style="color:blue">compiling tests</span>
 -----------------------------------
-compilation passed
+<span style="color:green">compilation passed</span>
 
 
-constructor
+<span style="color:blue">constructor/span>
 -----------------------------------
-test passed
-valgrind passed
+<span style="color:green">test passed</span>
+<span style="color:green">valgrind passed</span>
 
 
-set get
+<span style="color:blue">set get</span>
 -----------------------------------
-test passed
-valgrind passed
+<span style="color:green">test passed</span>
+<span style="color:green">valgrind passed</span>
 
 
-results
+<span style="color:blue">results</span>
 -----------------------------------
 2 / 2 tests passed
 2 / 2 valgrind tests passed
