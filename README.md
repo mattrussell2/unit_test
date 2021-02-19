@@ -276,11 +276,11 @@ Let's fix the memory leak, and use a print statements to help catch our other bu
 
 class Foo {
  public:
-  Foo()  { std::cout << "inside the constructor" << std::endl; };
+  Foo()  { std::cerr << "inside the constructor" << std::endl; };
   ~Foo() {};
   
   void set(int x) { 
-     std::cout << "entered set" << std::endl; 
+     std::cerr << "entered set" << std::endl; 
      this->value = 50; 
      std::cout << "the value of x is: " << x << std::endl;
      std::cout << "the value of my value is: " << this->value << std::endl;
@@ -291,7 +291,7 @@ class Foo {
   int value; 
 };
 ```
-cout and cerr, if they contain any data, will be printed to the terminal.
+cout and cerr are captured during runtime and will be printed to the terminal if not empty.
 ```
 matt:example$ unit_test
 
