@@ -116,7 +116,7 @@ In order to use unit_test, a few requirements must be met. Namely, there must be
 testing files in your working directory, each containing test functions. Further, there must
 be a Makefile which follows a few simple rules. Details follow below. 
 
-### test file(s) 
+### test file
 unit_test requires one or more testing files of the form XX_tests.cpp
 
 ### test functions
