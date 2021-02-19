@@ -1,0 +1,298 @@
+#!/g/15/2020uc/support/bin/python3.7
+"""
+unit_test
+matt russell
+comp15 2020 summer
+updated 12/11/2020
+
+unit_test - a frictionless C++ unit testing framework.
+
+details relating to this script can be found in the README
+"""
+import subprocess
+import sys
+import re
+import os
+import shutil
+from math import ceil
+
+DRIVERCONTENTS = \
+"""
+/*
+    unit_test_driver.cpp
+    Matt Russell
+    COMP15 2020 Summer
+    Updated 12/16/2020
+
+    This file is used by the unit_test script for automatic testing.
+
+    Specifically, function headers for the tests and the 'tests' map
+    will be auto-populated from the functions in the student's
+    XX_tests.cpp file
+
+    This file, while necessary for compilation / running of the
+    automated tests, is copied to the students working directory
+    automatically, and is removed upon completion of the tests.
+*/
+
+#include <map>
+#include <string>
+
+typedef void (*FnPtr)();
+// function headers will be inserted by the unit_test script
+
+
+int main(int argc, char **argv) {
+
+    // will be filled in by the unit_test script
+    std::map<std::string, FnPtr> tests {
+
+    };
+
+    /*
+     * 1st argument to main is the string of a function name -- extract the
+     * associated function pointer from "tests", and run the test
+     */
+    FnPtr fn = tests[argv[1]];
+    fn();
+
+    return 0;
+}
+"""
+
+DRIVERFILE = "unit_test_driver.cpp"
+
+#-----------------------------------------------------------------------------#
+#                              init vars                                      #
+#-----------------------------------------------------------------------------#
+# color codes for pretty printing to the terminal
+FAILURE = "31"
+SUCCESS = "32"
+INFO    = "34"
+OSTREAM = "35"
+OUTPUT  = "37"
+
+if len(sys.argv) > 1 and sys.argv[1] == '-v':
+    VARG = sys.argv[1]
+else:
+    VARG = ""
+#-----------------------------------------------------------------------------#
+#                            helper functions                                 #
+#-----------------------------------------------------------------------------#
+# inform prints the provided string to cout in the provided color
+# if linebreak, add a dotted line
+def inform(s, color=OUTPUT, linebreak=False):
+    if color == INFO:
+        sys.stderr.write("\n\n")
+
+    sys.stderr.write("\033[1;" + color + "m" + s + "\033[0m\n")
+
+    if linebreak:
+        if color == OSTREAM:
+            sys.stderr.write("------\n")
+        else:
+            sys.stderr.write("-----------------------------------\n")
+
+# run runs the subprocess module and returns result
+# args must be a list of arguments
+def run(args):
+    result = subprocess.run(args,
+                            capture_output=True,
+                            universal_newlines = True)
+    return result
+
+# run_valgrind runs valgrind on a test
+def run_valgrind(test):
+    valgrind_command = ['valgrind',
+                        '--leak-check=full',
+                        '--show-leak-kinds=all']
+    if VARG != "":
+        valgrind_command.append(VARG)
+
+    valgrind_command.append('./a.out')
+    valgrind_command.append(test)
+
+    VALGRIND_RESULT = run(valgrind_command)
+
+    # memory errors force nonzero return code
+    if VALGRIND_RESULT.returncode != 0:
+        valgrind_passed = False
+    else:
+        valgrind_passed = True # will set to False if leaks are present
+
+        passphrase = "All heap blocks were freed -- no leaks are possible"
+        if passphrase not in VALGRIND_RESULT.stderr:
+
+            # only capture the part after "LEAK SUMMARY"
+            VALGRIND_INFO = VALGRIND_RESULT.stderr.split("LEAK SUMMARY")[1]
+
+            # check for leaks
+            for line in VALGRIND_INFO.split('\n'):
+                if "lost" in line and "0 bytes in 0 blocks" not in line:
+                    valgrind_passed = False
+                    break
+
+    return (valgrind_passed, VALGRIND_RESULT)
+
+# cleanup removes the copied driver
+def cleanup():
+    run(['make', 'clean'])
+    os.remove(DRIVERFILE)
+
+# prints the contents of the ostreams stderr and stdout, if they exist
+def print_ostreams(test_result):
+    # print output streams if they exist in test
+    if test_result.stdout:
+        inform("stdout", color=OSTREAM, linebreak=True)
+        inform(test_result.stdout, color=OUTPUT)
+    if test_result.stderr:
+        inform("stderr", color=OSTREAM, linebreak=True)
+        inform(test_result.stderr, color=OUTPUT)
+
+#-----------------------------------------------------------------------------#
+#                             initial setup                                   #
+#-----------------------------------------------------------------------------#
+inform("setting up tests", color=INFO, linebreak=True)
+
+# copy the (incomplete) driver to the current working directory
+with open(DRIVERFILE, 'w') as f:
+     f.write(DRIVERCONTENTS)
+
+#-----------------------------------------------------------------------------#
+#     extract test names and function definitions from the testing file(s)    #
+#-----------------------------------------------------------------------------#
+test_files = [f for f in os.listdir('./') if "_tests.cpp" in f and '~' not in f]
+test_names = []
+decl_lines = []
+
+for test_file_name in test_files:
+    curr_test_file = open(test_file_name, 'r').read()
+
+    # extract the void function declarations that take no args
+    curr_test_list = re.findall(r'\n\s*void .*\(\)', curr_test_file)
+
+    # extract the names of the tests for this test file
+    test_names.extend([x.split()[1].split('(')[0] for x in curr_test_list])
+
+    # extract the function definitions of the tests for this test file
+    # these will be used to forward declare the functions in the driver
+    decl_lines.extend([x.lstrip() + ';\n' for x in curr_test_list])
+
+#-----------------------------------------------------------------------------#
+#              augment the driver file with the test information              #
+#-----------------------------------------------------------------------------#
+# extract the contents of the driver file as a list of strings (one per line)
+with open(DRIVERFILE, 'r') as driver_file:
+    driver_contents = driver_file.readlines()
+
+# find the right locations to insert the forward declarations and the pairs
+for i, line in enumerate(driver_contents):
+    if "typedef void (*FnPtr)();"           in line:  decl_line_num = i + 1
+    if "std::map<std::string, FnPtr> tests" in line:  pair_line_num = i + 1
+
+# insert the pairs (note these are later in the file, so do them first)
+for test_name in test_names:
+    pair_line = "\t{ \"" + test_name + "\" , " + test_name + " },\n"
+    driver_contents.insert(pair_line_num, pair_line)
+    pair_line_num += 1
+
+# insert the forward declarations
+for decl_line in decl_lines:
+    driver_contents.insert(decl_line_num, decl_line)
+    decl_line_num += 1
+
+# save the new driver file
+driver_contents = "".join(driver_contents)
+with open(DRIVERFILE, 'w') as driver_file:
+    driver_file.write(driver_contents)
+
+inform("tests were set up successfully", color=SUCCESS)
+
+#-----------------------------------------------------------------------------#
+#                            compile the tests                                #
+#-----------------------------------------------------------------------------#
+inform("compiling tests", color=INFO, linebreak=True)
+try:
+    compilation_result = run(['make', 'unit_test'])
+except UnicodeDecodeError:
+    inform("compilation failed", color=FAILURE)
+    inform("Compilation likely failed because you are out of disk space.\n" +
+           "Use the command: du -h -d 1 to discover which directories are\n" +
+           "using up most of your space, and then find large files with the\n" +
+           "command: ls -lah. After freeing up space, please try running\n" +
+           "unit_test again." +
+           "for assistance.")
+    cleanup()
+    sys.exit(1)
+
+if compilation_result.returncode == 0:
+    inform("compilation passed", color=SUCCESS)
+else:
+    inform("compilation failed", color=FAILURE)
+    print_ostreams(compilation_result)
+    cleanup()
+    sys.exit(1) # quit if compilation fails
+
+#-----------------------------------------------------------------------------#
+#                              run the tests                                  #
+#-----------------------------------------------------------------------------#
+num_tests           = len(test_names)
+num_tests_passed    = 0
+num_valgrind_passed = 0
+
+for test in test_names:
+    human_readable_name = " ".join(test.split('_'))
+
+    inform(human_readable_name, color=INFO, linebreak=True)
+
+    try:
+        TEST_RESULT = run(["./a.out", test])
+    except UnicodeDecodeError:
+        inform("test failed", color=FAILURE)
+        inform("attempt to access uninitialized variable or variable " +
+               "that has gone out of scope", color=FAILURE)
+        inform("valgrind failed by default", color=FAILURE)
+        inform("Cannot print ostreams because of this issue. Try carefully\n" +
+               "commenting out sections of code and re-running unit_test\n" +
+               "until you find the *exact* line that is the cause of the\n" +
+               "problem. Then, look at the values of the variables in the\n" +
+               "context that they are being used - try to find which one(s)\n" +
+               "is/are not initialized or has/have gone out of scope.", color=INFO)
+        continue
+
+    if TEST_RESULT.returncode != 0:                         # test failed
+        inform("test failed", color=FAILURE)
+        if abs(TEST_RESULT.returncode) == 11:
+            inform("segmentation fault!", color=FAILURE)
+            inform("Try carefully commenting out sections of code and\n" +
+               "re-running unit_test until you find the *exact* line that is\n" +
+               "the cause of the problem. Then, look at the values of the\n" +
+               "variables in the context that they are being used. Then,\n" +
+               "find which one(s) is/are attempting to read or write to an\n" +
+               "illegal memory location.\n", color=INFO)
+        inform("valgrind failed by default", color=FAILURE)
+        print_ostreams(TEST_RESULT)
+    else:                                                   # test passed
+        num_tests_passed += 1
+
+        inform("test passed", color=SUCCESS)
+        print_ostreams(TEST_RESULT)
+
+        valgrind_passed, VALGRIND_RESULT = run_valgrind(test)
+
+        if valgrind_passed:
+            inform("valgrind passed", color=SUCCESS)
+            num_valgrind_passed += 1
+        else:
+            inform("valgrind failed", color=FAILURE)
+            inform(VALGRIND_RESULT.stderr, color=FAILURE)
+
+#-----------------------------------------------------------------------------#
+#                    print test results and cleanup                           #
+#-----------------------------------------------------------------------------#
+inform("results", color=INFO, linebreak=True)
+inform(str(num_tests_passed) + " / " + str(num_tests) + " tests passed")
+inform(str(num_valgrind_passed) + " / " + str(num_tests) + " valgrind tests passed")
+print("\n")
+
+cleanup()
