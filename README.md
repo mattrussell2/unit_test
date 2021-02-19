@@ -130,9 +130,9 @@ Each test, even accross multiple testing files, must have a unique name.
 unit_test requires a Makefile with a target named 'unit_test', which must require a file
 main.cpp, and which will build an executable 'a.out'. 
 
-For example, the Makefile rule to test the Foo class with unit_test could be:
+For example, the Makefile rule to test the Foo class with unit_test could be:  
 
-  unit_test: main.cpp Foo_tests.cpp Foo.h
+    unit_test: main.cpp Foo_tests.cpp Foo.h  
         clang++ main.cpp Foo_tests.cpp
 
 **NOTE** 
