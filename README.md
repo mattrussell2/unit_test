@@ -205,13 +205,19 @@ functions as each being its own main. For details on this see below. To be clear
 using unit_test, you do **NOT** need to run 'make', create main.cpp, or create a main(). 
 
 ## testing notes
-A test is considered upon successful execution of the test function. 
+A test is considered successful upon successful completion of the test function. 
 
-It is suggested that you use assert in your tests, however this is not required. 
+It is suggested that you use assert() in your tests, however this is not required. 
 
-Each test will be run with valgrind immediately after the test is run. 
+Upon successful completion of a test, it will immediately be rerun with valgrind.
 
 Any test that fails will fail valgrind by default. 
+
+Valgrind is run with --leak-check=full and --show-leak-kinds=all by default. 
+
+Run **unit_test -v** to run valgrind in verbose mode. 
+
+After each test, the output of stdout and stderr are printed to the terminal if not empty. 
 
 ## unit_test implementation details 
 
