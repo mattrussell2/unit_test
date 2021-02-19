@@ -1,6 +1,10 @@
 Let's assume we want to test the following class Foo. 
 
 ```cpp
+/*
+ * Foo.h
+ * A simple class.
+ */
 class Foo {
  public:
   Foo() {};
@@ -14,9 +18,13 @@ class Foo {
 };
 ```
 
-Here are unit tests for the class. 
+Here is the unit testing file for Foo 
 
 ```cpp
+/*
+ * Foo_tests.cpp
+ * unit tests for the Foo class.
+ */
 #include <cassert>
 #include "Foo.h"
 
