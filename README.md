@@ -169,8 +169,11 @@ class Foo {
   int value; 
 };
 ```
+Fortunately, unit_test doesn't let us get away with such silliness!
+```
+matt:example$ unit_test
 
-```setting up tests
+setting up tests
 -----------------------------------
 tests were set up successfully
 
@@ -263,7 +266,88 @@ results
 matt:example$ 
 ```
 
+Let's fix the memory leak, but use a print statements to help catch our bug.
+```cpp
+/*
+ * Foo.h
+ * A simple class.
+ */
 
+#include<iostream>
+
+class Foo {
+ public:
+  Foo()  {std::cout << "inside the constructor" << std::endl;};
+  ~Foo() {};
+  
+  void set(int x) { 
+     std::cout << "entered set" << std::endl; 
+     this->value = 50; 
+     std::cout << "the value of x is: " << x << std::endl;
+     std::cout << "the value of my value is: " << this->value << std::endl;
+  };
+  int  get()      { return this->value; };
+  
+ private:
+  int value; 
+};
+```
+```
+matt:example$ unit_test
+
+
+setting up tests
+-----------------------------------
+tests were set up successfully
+
+
+compiling tests
+-----------------------------------
+compilation passed
+
+
+constructor
+-----------------------------------
+test passed
+valgrind passed
+
+
+set test
+-----------------------------------
+test passed
+stdout
+------
+entered set
+the value of x is 10
+the value of my value is: 50
+
+valgrind passed
+
+
+set and get
+-----------------------------------
+test failed
+valgrind failed by default
+stdout
+------
+entered set
+the value of x is 10
+the value of my value is: 50
+
+stderr
+------
+a.out: Foo_tests.cpp:27: void set_and_get(): Assertion `f.get() == 10' failed.
+
+
+
+results
+-----------------------------------
+2 / 3 tests passed
+2 / 3 valgrind tests passed
+
+
+matt:example$ 
+```
 
 ## prerequisites 
 
