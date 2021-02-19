@@ -37,7 +37,7 @@ void set_test() {
   f.set(10); 
 }
 
-void set_get() {
+void set_and_get() {
   Foo f; 
   f.set(10); 
   assert(f.get() == 10); 
@@ -71,7 +71,7 @@ test passed
 valgrind passed
 
 
-set get
+set and get
 -----------------------------------
 test passed
 valgrind passed
@@ -82,6 +82,69 @@ results
 3 / 3 tests passed
 3 / 3 valgrind tests passed
 ```
+
+Now, let's introduce a bug into our Foo class
+```cpp
+/*
+ * Foo.h
+ * A simple class.
+ */
+class Foo {
+ public:
+  Foo() {};
+  ~Foo() {};
+  
+  void set(int x) { this->value = 50;   }; //should be x, not 50!
+  int  get()      { return this->value; };
+  
+ private:
+  int value; 
+};
+```
+The output of unit_test reads:
+
+```
+matt:example$ unit_test
+
+
+setting up tests
+-----------------------------------
+tests were set up successfully
+
+
+compiling tests
+-----------------------------------
+compilation passed
+
+
+constructor
+-----------------------------------
+test passed
+valgrind passed
+
+
+set test
+-----------------------------------
+test passed
+valgrind passed
+
+
+set and get
+-----------------------------------
+test failed
+valgrind failed by default
+stderr
+------
+a.out: Foo_tests.cpp:27: void set_get(): Assertion `f.get() == 10' failed.
+
+
+
+results
+-----------------------------------
+2 / 3 tests passed
+2 / 3 valgrind tests passed
+```
+
 
 ## prerequisites 
 
