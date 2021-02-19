@@ -120,7 +120,7 @@ be a Makefile which follows a few simple rules. Details follow below.
 unit_test requires one or more testing files of the form XX_tests.cpp
 
 ### test functions
-Each test must be a function which has
+Each test must be a function which has  
   1) a void return type  
   2) no input arguments
 
