@@ -35,9 +35,8 @@ void set_get() {
 }   
 ```
 
-And the output of running unit_test
+And the output of running unit_test  
 
-```
 matt:example$ unit_test
 
 
@@ -67,8 +66,6 @@ matt:example$ unit_test
 -----------------------------------
 2 / 2 tests passed
 2 / 2 valgrind tests passed
-
-```
 
 ## prerequisites 
 
