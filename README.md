@@ -18,9 +18,9 @@ Great! The unit testing framework is now set up.
 
 ## usage
 
-To see the system in action:
-   go to examples/
-   run unit_test 
+To see the system in action:  
+   go to examples/  
+   run unit_test   
    
 If the command fails, ensure that unit_test is in a folder on your $PATH, and 
 that it is marked as executable. 
