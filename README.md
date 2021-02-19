@@ -168,7 +168,7 @@ class Foo {
   int value; 
 };
 ```
-Fortunately, unit_test doesn't let us get away with such silliness!
+Fortunately, unit_test doesn't let us get away with this madness!
 ```
 matt:example$ unit_test
 
