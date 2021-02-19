@@ -22,4 +22,11 @@ void set_get() {
   assert(f.get() == 10); 
 }
 
-
+void eqls_op() {
+  Foo f; 
+  f.set(3); 
+  Foo g; 
+  g.set(4); 
+  assert(f != g); 
+  assert(f == f); 
+}   
