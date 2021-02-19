@@ -12,7 +12,7 @@ Let's assume we want to test the following class Foo.
  */
 class Foo {
  public:
-  Foo() {};
+  Foo()  {};
   ~Foo() {};
   
   void set(int x) { this->value = x;    };
@@ -96,7 +96,7 @@ Now, let's introduce a bug into our Foo class
  */
 class Foo {
  public:
-  Foo() {};
+  Foo()  {};
   ~Foo() {};
   
   void set(int x) { this->value = 50;   }; //should be x, not 50!
@@ -159,7 +159,7 @@ Let's go ahead and introduce a memory leak in the constructor!
  */
 class Foo {
  public:
-  Foo() { int *x = new int[100]};
+  Foo()  { int *x = new int[100] };
   ~Foo() {};
   
   void set(int x) { this->value = x;    };
