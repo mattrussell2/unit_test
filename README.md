@@ -274,7 +274,10 @@ Let's fix the memory leak, and use print statements to help catch our other bug.
 
 class Foo {
  public:
-  Foo()  { std::cout << "inside the constructor" << std::endl; };
+  Foo()  { 
+      std::cout << "inside the constructor" << std::endl;
+  };
+  
   ~Foo() {};
   
   void set(int x) { 
@@ -283,7 +286,10 @@ class Foo {
      std::cout << "the value of x is: " << x << std::endl;
      std::cout << "the value of my value is: " << this->value << std::endl;
   };
-  int  get()      { return this->value; };
+  
+  int get() { 
+      return this->value;
+  };
   
  private:
   int value; 
@@ -345,6 +351,35 @@ results
 
 
 matt:example$ 
+```
+
+What happens if our code crashes? Let's manually raise a segfault in get()
+```cpp
+/*
+ * Foo.h
+ * A simple class.
+ */
+
+#include <iostream>
+#include <csignal>
+
+class Foo {
+ public:
+  Foo()  {};
+  ~Foo() {};
+  
+  void set(int x) {  
+     this->value = x; 
+  };
+  
+  int get() {
+     std::raise(SIGSEGV); 
+     return this->value;
+  };
+  
+ private:
+  int value; 
+};
 ```
 
 ## prerequisites 
