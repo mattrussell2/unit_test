@@ -276,7 +276,7 @@ Let's fix the memory leak, and use a print statements to help catch our other bu
 
 class Foo {
  public:
-  Foo()  {std::cout << "inside the constructor" << std::endl;};
+  Foo()  { std::cout << "inside the constructor" << std::endl; };
   ~Foo() {};
   
   void set(int x) { 
