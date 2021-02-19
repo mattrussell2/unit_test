@@ -2,12 +2,69 @@
 # unit_test - a frictionless C++ unit testing framework.
 By Matt Russell
 
+
 ```cpp
-int main(){
-    return 0;
-}
+/*
+ * ArrayList.h
+ */
+
+class ArrayList(){
+  public:
+    ArrayList();
+    ~ArrayList();
+
+    void getSize(); 
+    void pushBack(int);
+    void popBack(int);
+    
+    ...
+    
+};
 
 ```
+
+```cpp
+/*
+ * ArrayList_tests.cpp
+ */
+ 
+#include <iostream>
+#include "ArrayList.h"
+
+void first_size_test(){
+    ArrayList list; 
+    assert(list.size() == 0);
+    list.push_back(1); 
+    assert(list.size() == 1); 
+    list.push_back(2);
+    assert(list.size() == 2); 
+}
+
+void scnd_size_test(){
+    ArrayList list; 
+    for (int i = 0; i < 100; i++)
+    { 
+        assert(list.size() == i); 
+        list.pushBack(i); 
+    }
+}   
+
+void third_size_test(){
+    ArrayList list; 
+    for (int i = 0; i < 100; i++)
+    { 
+        assert(list.size() == i); 
+        list.popBack(i); 
+    }
+    
+    for (int i = 100; i > 0; i--){
+        assert(list.size() == i); 
+        list.popBack(i);
+    }
+}   
+
+```
+
 
 
 ## prerequisites 
