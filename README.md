@@ -137,8 +137,8 @@ For example, the Makefile rule to test the Foo class with unit_test could be:
 
 **NOTE** 
 The file main.cpp is created for you by unit_test - this file has the testing 
-program's main(), so there is no need for you to write a main. Instead, think of your test
-functions as each being its own main. When using unit_test, you do **NOT** need to run 'make', 
+program's main(), so there is no need for you to write a main(). Instead, think of your test
+functions as each being its own main. To be clear, when using unit_test, you do **NOT** need to run 'make', 
 create main.cpp, or create a main(). 
 
 ## testing notes
