@@ -65,7 +65,7 @@ that it is user-executable.
 ## usage requirements
 In order to use unit_test, a few requirements must be met. Namely, there must be certain 
 testing files in your working directory, each containing test functions. Further, there must
-be a Makefile which follows a few simple rules. 
+be a Makefile which follows a few simple rules. Details follow below. 
 
 ### test file(s) 
 unit_test requires one or more testing files of the form XX_tests.cpp
@@ -74,6 +74,8 @@ unit_test requires one or more testing files of the form XX_tests.cpp
 Each test must be a function which has
   1) a void return type  
   2) no input arguments
+
+Each test, even accross multiple testing files, must have a unique name. 
 
 ### Makefile
 unit_test requires a Makefile with a target names 'unit_test', which requires a file unit_test_driver.cpp, and which will build an executable 'a.out'. 
