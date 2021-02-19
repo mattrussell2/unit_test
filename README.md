@@ -34,38 +34,9 @@ void set_get() {
   assert(f.get() == 10); 
 }   
 ```
-
-And the output of running unit_test  
-
-matt:example$ unit_test
+And the output of unit_test
 
 
-<p style="color:blue">setting up tests</p>
------------------------------------
-<span style="color:green">tests were set up successfully</span>
-
-
-<span style="color:blue">compiling tests</span>
------------------------------------
-<span style="color:green">compilation passed</span>
-
-
-<span style="color:blue">constructor/span>
------------------------------------
-<span style="color:green">test passed</span>
-<span style="color:green">valgrind passed</span>
-
-
-<span style="color:blue">set get</span>
------------------------------------
-<span style="color:green">test passed</span>
-<span style="color:green">valgrind passed</span>
-
-
-<span style="color:blue">results</span>
------------------------------------
-2 / 2 tests passed
-2 / 2 valgrind tests passed
 
 ## prerequisites 
 
