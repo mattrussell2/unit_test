@@ -1,7 +1,6 @@
 Unit test is a simple and elegant framework in which you can write and run tests for C++ code. 
 
-Its goal is to maximize user time spent writing tests, and to minimize user time spent on pedantic 
-infrastructure overhead. 
+Its goal is to maximize user time spent writing tests and testing their code.
 
 Let's assume we want to test the following class Foo. 
 
