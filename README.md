@@ -109,7 +109,7 @@ To see this demo in action:
     unit_test
     
 If the command fails, ensure that unit_test is in a folder on your $PATH, and 
-that it is user-executable. 
+that the file it executable by you. 
 
 ## usage requirements
 In order to use unit_test, a few requirements must be met. Namely, there must be certain 
