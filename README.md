@@ -68,10 +68,37 @@ void third_size_test(){
 
 ```
 
+```bash
 unit_test output
 
+setting up tests
+-----------------------------------
+tests were set up successfully
 
 
+compiling tests
+-----------------------------------
+compilation passed
+
+
+constructor
+-----------------------------------
+test passed
+valgrind passed
+
+
+set get
+-----------------------------------
+test passed
+valgrind passed
+
+
+results
+-----------------------------------
+2 / 2 tests passed
+2 / 2 valgrind tests passed
+
+```
 
 ## prerequisites 
 
