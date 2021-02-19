@@ -19,11 +19,9 @@ from math import ceil
 DRIVERCONTENTS = \
 """
 /*
-    unit_test_driver.cpp
+    main.cpp
     Matt Russell
-    COMP15 2020 Summer
-    Updated 12/16/2020
-
+    
     This file is used by the unit_test script for automatic testing.
 
     Specifically, function headers for the tests and the 'tests' map
@@ -60,7 +58,7 @@ int main(int argc, char **argv) {
 }
 """
 
-DRIVERFILE = "unit_test_driver.cpp"
+DRIVERFILE = "main.cpp"
 
 #-----------------------------------------------------------------------------#
 #                              init vars                                      #
