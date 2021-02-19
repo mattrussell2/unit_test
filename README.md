@@ -127,9 +127,10 @@ Each test must be a function which has
 Each test, even accross multiple testing files, must have a unique name. 
 
 ### Makefile
-unit_test requires a Makefile with a target names 'unit_test', which requires a file unit_test_driver.cpp, and which will build an executable 'a.out'. 
+unit_test requires a Makefile with a target named 'unit_test', which must require a file
+unit_test_driver.cpp, and which will build an executable 'a.out'. 
 
-For the sample program above, the following would be a simple Makefile rule for unit_test:
+For example, the Makefile rule to test the Foo class with unit_test could be:
 
   unit_test: unit_test_driver.cpp Foo_tests.cpp Foo.h
         clang++ unit_test_driver.cpp Foo_tests.cpp
