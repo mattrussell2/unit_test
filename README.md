@@ -381,6 +381,58 @@ class Foo {
   int value; 
 };
 ```
+Fortunately, unit_test runs each test individually, so one segfault will not crash 
+all tests.
+```
+matt:example$ unit_test
+
+
+setting up tests
+-----------------------------------
+tests were set up successfully
+
+
+compiling tests
+-----------------------------------
+compilation passed
+
+
+constructor
+-----------------------------------
+test passed
+valgrind passed
+
+
+set test
+-----------------------------------
+test passed
+valgrind passed
+
+
+set and get
+-----------------------------------
+test failed
+segmentation fault!
+
+
+Try carefully commenting out sections of code and
+re-running unit_test until you find the *exact* line that is
+the cause of the problem. Then, look at the values of the
+variables in the context that they are being used. Then,
+find which one(s) is/are attempting to read or write to an
+illegal memory location.
+
+valgrind failed by default
+
+
+results
+-----------------------------------
+2 / 3 tests passed
+2 / 3 valgrind tests passed
+
+
+matt:example$ 
+```
 
 ## prerequisites 
 
