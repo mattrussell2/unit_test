@@ -12,7 +12,7 @@ unit_test requires Python >= 3.7, clang++, and valgrind
     cd unit_test
     chmod u+x unit_test
 
-    copy the unit_test file anywhere on your $PATH
+Copy the unit_test file to any location on your $PATH
     
 Great! The unit testing framework is now set up. 
 
