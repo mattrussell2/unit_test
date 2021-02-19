@@ -82,7 +82,7 @@ unit_test requires a Makefile with a target names 'unit_test', which requires a 
 For the sample program above, the following would be a simple Makefile rule for unit_test:
 
   unit_test: unit_test_driver.cpp Foo_tests.cpp Foo.h
-        $(CXX) $(CXXFLAGS) unit_test_driver.cpp Foo_tests.cpp
+        clang++ unit_test_driver.cpp Foo_tests.cpp
 
 **NOTE** 
 The file unit_test_driver.cpp is created for you by unit_test - this file has the testing 
