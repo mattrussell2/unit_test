@@ -1,3 +1,8 @@
+Unit test is a simple and elegant framework in which you can write and run tests for C++ code. 
+
+Its goal is to maximize user time spent writing tests, and to minimize user time spent on pedantic 
+infrastructure overhead. 
+
 Let's assume we want to test the following class Foo. 
 
 ```cpp
@@ -18,7 +23,7 @@ class Foo {
 };
 ```
 
-With unit_test, here's a test file for Foo. 
+With unit_test, here's an example unit testing file for Foo. 
 
 ```cpp
 /*
@@ -144,6 +149,120 @@ results
 2 / 3 tests passed
 2 / 3 valgrind tests passed
 ```
+
+Let's go ahead and introduce a memory leak in the constructor!
+
+```cpp
+/*
+ * Foo.h
+ * A simple class.
+ */
+class Foo {
+ public:
+  Foo() { int *x = new int[100]};
+  ~Foo() {};
+  
+  void set(int x) { this->value = x;    };
+  int  get()      { return this->value; };
+  
+ private:
+  int value; 
+};
+```
+
+```setting up tests
+-----------------------------------
+tests were set up successfully
+
+
+compiling tests
+-----------------------------------
+compilation passed
+
+
+constructor
+-----------------------------------
+test passed
+valgrind failed
+==6477== Memcheck, a memory error detector
+==6477== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==6477== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==6477== Command: ./a.out constructor
+==6477== 
+==6477== 
+==6477== HEAP SUMMARY:
+==6477==     in use at exit: 400 bytes in 1 blocks
+==6477==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==6477== 
+==6477== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6477==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6477==    by 0x4039E5: Foo::Foo() (in /home/matt/unit_test/example/a.out)
+==6477==    by 0x4038B0: constructor() (in /home/matt/unit_test/example/a.out)
+==6477==    by 0x401506: main (in /home/matt/unit_test/example/a.out)
+==6477== 
+==6477== LEAK SUMMARY:
+==6477==    definitely lost: 400 bytes in 1 blocks
+==6477==    indirectly lost: 0 bytes in 0 blocks
+==6477==      possibly lost: 0 bytes in 0 blocks
+==6477==    still reachable: 0 bytes in 0 blocks
+==6477==         suppressed: 0 bytes in 0 blocks
+==6477== 
+==6477== For lists of detected and suppressed errors, rerun with: -s
+==6477== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+
+
+set test
+-----------------------------------
+test passed
+valgrind failed
+==6479== Memcheck, a memory error detector
+==6479== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==6479== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==6479== Command: ./a.out set_test
+==6479== 
+==6479== 
+==6479== HEAP SUMMARY:
+==6479==     in use at exit: 400 bytes in 1 blocks
+==6479==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==6479== 
+==6479== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6479==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6479==    by 0x4039E5: Foo::Foo() (in /home/matt/unit_test/example/a.out)
+==6479==    by 0x4038D7: set_test() (in /home/matt/unit_test/example/a.out)
+==6479==    by 0x401506: main (in /home/matt/unit_test/example/a.out)
+==6479== 
+==6479== LEAK SUMMARY:
+==6479==    definitely lost: 400 bytes in 1 blocks
+==6479==    indirectly lost: 0 bytes in 0 blocks
+==6479==      possibly lost: 0 bytes in 0 blocks
+==6479==    still reachable: 0 bytes in 0 blocks
+==6479==         suppressed: 0 bytes in 0 blocks
+==6479== 
+==6479== For lists of detected and suppressed errors, rerun with: -s
+==6479== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+
+
+set and get
+-----------------------------------
+test failed
+valgrind failed by default
+stderr
+------
+a.out: Foo_tests.cpp:27: void set_and_get(): Assertion `f.get() == 10' failed.
+
+
+
+results
+-----------------------------------
+2 / 3 tests passed
+0 / 3 valgrind tests passed
+
+
+matt:example$ 
+```
+
 
 
 ## prerequisites 
