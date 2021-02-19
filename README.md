@@ -63,25 +63,33 @@ To see this demo in action:
 If the command fails, ensure that unit_test is in a folder on your $PATH, and 
 that it is user-executable. 
 
-## usage
+## usage requirements
+In order to use unit_test, a few requirements must be met. Namely, there must be certain 
+testing files in your working directory, each containing test functions. Further, there must
+be a Makefile which follows a few simple rules. 
 
-### file requirements
-unit_test requires:
+### test file(s) 
+unit_test requires one or more testing files of the form XX_tests.cpp
 
-1) A testing file of the form XX_tests.cpp to be in your current working directory
-2) A Makefile which requires a file unit_test_driver.cpp, and which will build an executable 'a.out'. 
-
-The file unit_test_driver.cpp is created for you by unit_test - this file has the testing 
-program's main(), so there is no need for you to write a main. Instead, think of your test
-functions as each being its own main. 
-
-### test requirements
-
+### test functions
 Each test must be a function which has
   1) a void return type  
   2) no input arguments
 
+### Makefile
+unit_test requires a Makefile with a target names 'unit_test', which requires a file unit_test_driver.cpp, and which will build an executable 'a.out'. 
 
+For the sample program above, the following would be a simple Makefile rule for unit_test:
+
+  unit_test: unit_test_driver.cpp Foo_tests.cpp Foo.h
+        $(CXX) $(CXXFLAGS) unit_test_driver.cpp Foo_tests.cpp
+
+**NOTE** 
+The file unit_test_driver.cpp is created for you by unit_test - this file has the testing 
+program's main(), so there is no need for you to write a main. Instead, think of your test
+functions as each being its own main. 
+
+## testing notes
 A test is considered upon successful execution of the test function. 
 
 It is suggested that you use assert in your tests, however this is not required. 
@@ -92,39 +100,22 @@ Any test that fails will fail valgrind by default.
 
 ## unit_test implementation details 
 
-There are a two key phases of this script: 
-
-1) initilize unit_test_driver.cpp  
-2) compile, run, and run valgrind on all tests cases
-
-### initialization
-
-This program works by leveraging an originally incomplete driver, the text of
+unit_test works by leveraging an originally incomplete driver, the text of
 which is inside unit_test.
 
-Then, it parses all files in the student's working directory of the form XX_tests.cpp.
-
-Specifically, for each testing file, the script discovers all of the test functions. 
-Test functions are functions which have both
-  1) a void return type
-  2) no input arguments
-
-For each test function, the script:
-  1) Adds a forward declaration to the driver file text. 
+Specifically, unit_test extracts all test functions from all test files, and, 
+for each test function:
+  1) Adds a forward declaration of the function to the driver file text. 
   2) Inserts a string in the driver file text of the following format:
           
             { "test_function_name": test_function_name },\n
-
-    This pair is inserted in the initialization of a std::map<std::string, FnPtr>> object,
-    where "FnPtr" is a typdef of a void function that takes no arguments.
+            
+Each pair is inserted in the driver file text as part of the initialization of a std::map<std::string, FnPtr>> object, where "FnPtr" is a typdef of a 
+pointer to a void function that takes no arguments.
 
 The driver file, unit_test_driver.cpp, is then saved in the current working directory.
 
-### compilation and running
+Then the files are compiled in accordance with the Makefile, and a.out is run 
+one time for each test via the Python subprocess module. 
 
-    After compilation, Python makes subprocess calls to the compiled binary, passing 
-    in a testname as an argument.
-
-    Valgrind is run automatically on all tests, and pass/fail results are displayed. 
-
-    Passes / failures are kept track of; all results are printed to the terminal. 
+Specifically, for each test, the name of the test function name is provided to a.out as a string; the string is used as the key to extract the function pointer associated with the test. The test is then run. 
