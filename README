@@ -1,112 +1,66 @@
-unit_test
-matt russell
-comp15 2020 summer
-#unit_test - a frictionless C++ unit testing framework.
 
-##installation
+# unit_test - a frictionless C++ unit testing framework.
+By Matt Russell
 
-  git clone https://www.github.com/mattrussell2/unit_test
-  cd unit_test
-  
- 
-You will be asked for the following:
+## prerequisites 
 
-    1) Python3.7 location       (Note: default is /g/15/2020uc/support/bin/python3.7)* 
-    2) location for scripts     (Note: default is /comp/15/bin)**
-    3) location for lib file(s) (Note: default is /comp/15/lib)**
+unit_test requires Python >= 3.7, clang++, and valgrind
 
-*A working Python3.7 executable does live in that directory on the cs server; it
- will be available for 'all time', so please feel free to use the default! If
- you're on a local system, clearly you'll need a different path.
+## installation
 
-**If you want to set this up for personal use, rather than for the whole course
-use something other than /comp/15/bin and /comp/15/lib.
+    git clone https://www.github.com/mattrussell2/unit_test
+    cd unit_test
+    chmod u+x unit_test
 
-Great! The unit testing framework is now set up. To actually run unit_test,
-running the install script is still needed. The setup scrupt will ask you if
-you'd like to do this. If you decline by accident, simply follow the steps below
-------------------------------------------------------------------------------
-                  Instructions for student installation
-------------------------------------------------------------------------------
+    copy the unit_test file anywhere on your $PATH
+    
+Great! The unit testing framework is now set up. 
 
-For students to install unit_test, they must run the install script
-
-    /comp/15/bin/install_unit_test    
-
-(replace /comp/15/bin with the /bin path specified during initial setup)
-
-NOTE: do NOT use the install_unit_test located in the bin of this directory. 
-NOTE: you CAN use the install_unit_test located in the 'build' directory.
-
-After running the script, they should restart their shell,
-or run: source ~/.cshrc
-
-(Note: This script simply places the command to add the installation bin
-into the path of the person running the script on login. Feel free to do this
-yourself however you see fit! The idea is to be able to run unit_test from 
-your current working directory)
-
-------------------------------------------------------------------------------
-                    Instructions to run unit tests
-------------------------------------------------------------------------------
+## usage
 
 To see the system in action:
    go to examples/
-   run the command: unit_test (note: no './')
+   run unit_test 
+   
+If the command fails, ensure that unit_test is in a folder on your $PATH, and 
+that it is marked as executable. 
 
-If installation has worked, tests should run. If things fail immediately,
-confirm that all parhs were entered correctly, and that source ~/.cshrc was run
+Note that the examples contain bugs on purpose, so not all tests will pass!
 
-Note that the provided example has bugs, so the tests will not succeed. 
-
-For other projects, adapt the Makefile and example_tests.cpp files.
-
-See those files for details on how to update them.
-
-Making the example files available to students is probably a good idea, but is
-not done automatically during initialization
-
-
-------------------------------------------------------------------------------
-                      Notes for the brave of heart
-------------------------------------------------------------------------------
+## implementation details 
 
 There are a two key phases of this script: 
 
-1) Initilize Autograding Files
-2) Compile and Run (and Run Valgrind on) all test cases
+1) initilize unit_test_driver.cpp
+2) compile, run, and run valgrind on all tests cases
 
-The script also keeps track of student score, and prints results during runtime
+### initialization
 
-Initialization: 
+This program works by leveraging an originally incomplete driver, the text of
+which is inside unit_test.
 
-    This program works by leveraging an originally incomplete driver located at:
+Then, it parses all files in the student's working directory of the form XX_tests.cpp.
 
-    lib/unit_test_driver.cpp
+Specifically, for each testing file, the script discovers all of the test functions. 
+Test functions are functions which have both
+  1) a void return type
+  2) no input arguments
 
-    It first copies this incomplete driver to the student's working directory.
-
-    Then, it parses all files in the student's working directory with the suffix:
-
-    	     '_tests.cpp'
-
-    Specifically, for each such file, the script discovers all of the functions that have:
-        1) a void return type
-        2) no input arguments
-
-    For each function, the script:
-        1) Adds a forward declaration to the copied driver file. 
-        2) Inserts a string in the driver file of the following format:
+For each test function, the script:
+  1) Adds a forward declaration to the driver file text. 
+  2) Inserts a string in the driver file text of the following format:
           
             { "test_function_name": test_function_name },\n
 
     This pair is inserted in the initialization of a std::map<std::string, FnPtr>> object,
     where "FnPtr" is a typdef of a void function that takes no arguments.
 
-Compilation and Running:
+The driver file, unit_test_driver.cpp, is then saved in the current working directory.
 
-    This code is relatively straightforward. After compilation, Python makes subprocess calls 
-    to the compiled binary, passing in a testname as an argument.
+### compilation and running
+
+    After compilation, Python makes subprocess calls to the compiled binary, passing 
+    in a testname as an argument.
 
     Valgrind is run automatically on all tests, and pass/fail results are displayed. 
 
