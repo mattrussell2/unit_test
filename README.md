@@ -274,10 +274,7 @@ Let's fix the memory leak, and use print statements to help catch our other bug.
 
 class Foo {
  public:
-  Foo()  { 
-      std::cout << "inside the constructor" << std::endl;
-  };
-  
+  Foo()  {};
   ~Foo() {};
   
   void set(int x) { 
