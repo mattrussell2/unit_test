@@ -449,7 +449,7 @@ Assuming you're an administrator, and running Linux/Unix, for example:
     
 If not, you can always create an alias for unit_test in .bashrc or .profile
 
-    alias unit_test="/home/$USER/unit_test"
+    alias unit_test="/home/$USER/unit_test/unit_test"
 
 To see this demo in action:  
 
