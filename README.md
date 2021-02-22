@@ -3,7 +3,7 @@ unit_test is a simple and elegant framework with which you can write and run tes
 Let's assume we want to test the following class Foo. 
 
 ```asciidoc
-'test'
++test+
 //cpp
 /*
  * Foo.h
