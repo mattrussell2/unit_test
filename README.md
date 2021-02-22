@@ -292,7 +292,7 @@ class Foo {
   int value; 
 };
 ```
-cout and cerr are captured during runtime and will be printed to the terminal if not empty.
+stdout and stderr are captured during runtime and will be printed to the terminal if not empty.
 ```
 matt:example$ unit_test
 
@@ -433,7 +433,7 @@ matt:example$
 
 ## prerequisites 
 
-unit_test requires Python >= 3.7 and valgrind
+unit_test requires Python >= 3.7, valgrind and a C++ compiler that complies with a C++ standard >= C++11
 
 ## installation
 
