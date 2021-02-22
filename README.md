@@ -2,7 +2,10 @@ unit_test is a simple and elegant framework with which you can write and run tes
 
 Let's assume we want to test the following class Foo. 
 
-```cpp
+```.asciidoc
+[red]#Obvious#
+
+cpp
 /*
  * Foo.h
  * A simple class.
