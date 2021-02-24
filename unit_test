@@ -103,7 +103,8 @@ def run(args):
 def run_valgrind(test):
     valgrind_command = ['valgrind',
                         '--leak-check=full',
-                        '--show-leak-kinds=all']
+                        '--show-leak-kinds=all',
+                        '--error-exitcode=1']
     if VARG != "":
         valgrind_command.append(VARG)
 
