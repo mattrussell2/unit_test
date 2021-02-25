@@ -495,7 +495,8 @@ Or, of course:
     unit_test: main.o Foo_tests.o   
         clang++ main.o Foo_tests.o
 
-In the second example, you'll need to write your own rule for compiling main.cpp -> main.o
+In the second example, you'll need to write your own rule for compiling main.cpp -> main.o. 
+main.cpp has no dependencies.
 
 #### NOTE 
 **The file main.cpp is created for you by unit_test - this file has the testing 
