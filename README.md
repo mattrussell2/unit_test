@@ -527,8 +527,9 @@ which is inside unit_test.
 
 Specifically, unit_test extracts all test functions from all test files, and, 
 for each test function:
-  1) Adds a forward declaration for each function to the driver file text. 
-  2) Inserts a string in the driver file text of the following format:
+  
+  1. Adds a forward declaration for each function to the driver file text. 
+  2. Inserts a string in the driver file text of the following format:
           
             { "test_function_name": test_function_name },\n
             
