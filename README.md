@@ -435,7 +435,7 @@ matt:example$
 
 unit_test requires 
   * Python >= 3.7
-  * valgrind 
+  * Valgrind 
   * A C++ compiler with a C++ standard >= C++11
 
 ## installation
