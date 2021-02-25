@@ -1,4 +1,3 @@
-<img og:image:height="" src="https://www.cs.tufts.edu/~mrussell/unit_test_front.jpg" />
 unit_test is a simple and elegant framework with which you can write and run tests for C++ code. 
 
 Let's assume we want to test the following class Foo. 
