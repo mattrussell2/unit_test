@@ -433,7 +433,10 @@ matt:example$
 
 ## prerequisites 
 
-unit_test requires Python >= 3.7, valgrind and a C++ compiler that complies with a C++ standard >= C++11
+unit_test requires 
+  * Python >= 3.7
+  * valgrind 
+  * A C++ compiler with a C++ standard >= C++11
 
 ## installation
 
@@ -449,9 +452,13 @@ Assuming you're an administrator, and running Linux/Unix, for example:
     
 If not, you can always create an alias for unit_test in .bashrc or .profile
 
-    alias unit_test="/home/$USER/unit_test/unit_test"
+    alias unit_test="/path/to/unit_test_executable/unit_test"
+    
+If following this step, don't forget to run 
 
-To see this demo in action:  
+    source ~/.bashrc 
+
+To see the demo in action:  
 
     cd examples
     unit_test
@@ -465,10 +472,10 @@ testing files in your working directory, each containing test functions. Further
 be a Makefile which follows a few simple rules. Details follow below. 
 
 ### test file
-unit_test requires one or more testing files of the form XX_tests.cpp
+unit_test requires one or more testing files of the form XX_tests.cpp in your working directory
 
 ### test functions
-Each test must be a function which has  
+Each test in a test file must be a function which has  
   1) a void return type  
   2) no input arguments
 
@@ -476,18 +483,25 @@ Each test, even accross multiple testing files, must have a unique name.
 
 ### Makefile
 unit_test requires a Makefile with a target named 'unit_test', which must require a file
-main.cpp, and which will build an executable 'a.out'. 
+main.cpp (or main.o), and which will build an executable 'a.out'. 
 
 For example, the Makefile rule to test the Foo class with unit_test could be:  
 
     unit_test: main.cpp Foo_tests.cpp Foo.h  
         clang++ main.cpp Foo_tests.cpp
 
-**NOTE** 
-The file main.cpp is created for you by unit_test - this file has the testing 
+Or, of course:
+
+    unit_test: main.o Foo_tests.o   
+        clang++ main.o Foo_tests.o
+
+In the second example, you'll need to write your own rule for compiling main.cpp -> main.o
+
+#### NOTE 
+**The file main.cpp is created for you by unit_test - this file has the testing 
 program's main(), so there is no need for you to write a main(). Instead, think of your test
 functions as each being its own main. For details on this see below. To be clear, when 
-using unit_test, you do **NOT** need to run 'make', create main.cpp, or create a main(). 
+using unit_test, you do NOT need to run 'make', create main.cpp, or create a main()**
 
 ## testing notes
 A test is considered successful upon successful completion of the test function. 
@@ -497,6 +511,8 @@ It is suggested that you use assert() in your tests, however this is not require
 Upon successful completion of a test, it will immediately be rerun with valgrind.
 
 Any test that fails will fail valgrind by default. 
+
+You can run **unit_test -f** to force valgrind to run on failed test. 
 
 Valgrind is run with --leak-check=full and --show-leak-kinds=all by default. 
 
@@ -511,17 +527,20 @@ which is inside unit_test.
 
 Specifically, unit_test extracts all test functions from all test files, and, 
 for each test function:
-  1) Adds a forward declaration of the function to the driver file text. 
+  1) Adds a forward declaration for each function to the driver file text. 
   2) Inserts a string in the driver file text of the following format:
           
             { "test_function_name": test_function_name },\n
             
-Each pair is inserted in the driver file text as part of the initialization of a std::map<std::string, FnPtr>> object, where "FnPtr" is a typdef of a 
+Each pair is inserted in the driver file text as part of the initialization of a 
+std::map<std::string, FnPtr>> object, where "FnPtr" is a typdef of a 
 pointer to a void function that takes no arguments.
 
 The driver file, main.cpp, is then saved in the current working directory.
 
-Then the files are compiled in accordance with the Makefile, and a.out is run 
+The files are compiled in accordance with the Makefile, and a.out is run 
 one time for each test via the Python subprocess module. 
 
-Specifically, for each test, the name of the test function name is provided to a.out as a string; the string is used as the key to extract the function pointer associated with the test. The test is then run. 
+Specifically, for each test, the name of the test function name is provided 
+to a.out as a string; the string is used as the key to extract the function
+pointer associated with the test from the map. The test is then run. 
