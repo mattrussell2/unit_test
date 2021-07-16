@@ -1,4 +1,4 @@
-unit_test is a simple and elegant framework with which you can write and run tests for C++ code. 
+unit_test is a simple unit testing framework for C++ code. 
 
 Let's assume we want to test the following class Foo. 
 
