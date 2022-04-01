@@ -175,86 +175,89 @@ clang++ unit_test_driver.o
 ===============================================================================
 @@@@@@@@@@@@@@@@@@@@@@@@ test output for failing tests @@@@@@@@@@@@@@@@@@@@@@@@
 ===============================================================================
+=== constructor ===
 -valgrind stderr-
-==6974== Memcheck, a memory error detector
-==6974== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==6974== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==6974== Command: ./a.out constructor
-==6974== 
-==6974== 
-==6974== HEAP SUMMARY:
-==6974==     in use at exit: 400 bytes in 1 blocks
-==6974==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
-==6974== 
-==6974== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
-==6974==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==6974==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
-==6974==    by 0x401330: constructor() (in /home/mrussell/test/a.out)
-==6974==    by 0x4017AA: main (in /home/mrussell/test/a.out)
-==6974== 
-==6974== LEAK SUMMARY:
-==6974==    definitely lost: 400 bytes in 1 blocks
-==6974==    indirectly lost: 0 bytes in 0 blocks
-==6974==      possibly lost: 0 bytes in 0 blocks
-==6974==    still reachable: 0 bytes in 0 blocks
-==6974==         suppressed: 0 bytes in 0 blocks
-==6974== 
-==6974== For lists of detected and suppressed errors, rerun with: -s
-==6974== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+==7417== Memcheck, a memory error detector
+==7417== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7417== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==7417== Command: ./a.out constructor
+==7417== 
+==7417== 
+==7417== HEAP SUMMARY:
+==7417==     in use at exit: 400 bytes in 1 blocks
+==7417==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==7417== 
+==7417== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==7417==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7417==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
+==7417==    by 0x401330: constructor() (in /home/mrussell/test/a.out)
+==7417==    by 0x4017AA: main (in /home/mrussell/test/a.out)
+==7417== 
+==7417== LEAK SUMMARY:
+==7417==    definitely lost: 400 bytes in 1 blocks
+==7417==    indirectly lost: 0 bytes in 0 blocks
+==7417==      possibly lost: 0 bytes in 0 blocks
+==7417==    still reachable: 0 bytes in 0 blocks
+==7417==         suppressed: 0 bytes in 0 blocks
+==7417== 
+==7417== For lists of detected and suppressed errors, rerun with: -s
+==7417== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 
+=== set_test ===
 -valgrind stderr-
-==6978== Memcheck, a memory error detector
-==6978== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==6978== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==6978== Command: ./a.out set_test
-==6978== 
-==6978== 
-==6978== HEAP SUMMARY:
-==6978==     in use at exit: 400 bytes in 1 blocks
-==6978==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
-==6978== 
-==6978== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
-==6978==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==6978==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
-==6978==    by 0x401357: set_test() (in /home/mrussell/test/a.out)
-==6978==    by 0x4017AA: main (in /home/mrussell/test/a.out)
-==6978== 
-==6978== LEAK SUMMARY:
-==6978==    definitely lost: 400 bytes in 1 blocks
-==6978==    indirectly lost: 0 bytes in 0 blocks
-==6978==      possibly lost: 0 bytes in 0 blocks
-==6978==    still reachable: 0 bytes in 0 blocks
-==6978==         suppressed: 0 bytes in 0 blocks
-==6978== 
-==6978== For lists of detected and suppressed errors, rerun with: -s
-==6978== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+==7421== Memcheck, a memory error detector
+==7421== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7421== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==7421== Command: ./a.out set_test
+==7421== 
+==7421== 
+==7421== HEAP SUMMARY:
+==7421==     in use at exit: 400 bytes in 1 blocks
+==7421==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==7421== 
+==7421== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==7421==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7421==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
+==7421==    by 0x401357: set_test() (in /home/mrussell/test/a.out)
+==7421==    by 0x4017AA: main (in /home/mrussell/test/a.out)
+==7421== 
+==7421== LEAK SUMMARY:
+==7421==    definitely lost: 400 bytes in 1 blocks
+==7421==    indirectly lost: 0 bytes in 0 blocks
+==7421==      possibly lost: 0 bytes in 0 blocks
+==7421==    still reachable: 0 bytes in 0 blocks
+==7421==         suppressed: 0 bytes in 0 blocks
+==7421== 
+==7421== For lists of detected and suppressed errors, rerun with: -s
+==7421== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 
+=== set_and_get ===
 -valgrind stderr-
-==6991== Memcheck, a memory error detector
-==6991== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==6991== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==6991== Command: ./a.out set_and_get
-==6991== 
-==6991== 
-==6991== HEAP SUMMARY:
-==6991==     in use at exit: 400 bytes in 1 blocks
-==6991==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
-==6991== 
-==6991== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
-==6991==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==6991==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
-==6991==    by 0x4013B7: set_and_get() (in /home/mrussell/test/a.out)
-==6991==    by 0x4017AA: main (in /home/mrussell/test/a.out)
-==6991== 
-==6991== LEAK SUMMARY:
-==6991==    definitely lost: 400 bytes in 1 blocks
-==6991==    indirectly lost: 0 bytes in 0 blocks
-==6991==      possibly lost: 0 bytes in 0 blocks
-==6991==    still reachable: 0 bytes in 0 blocks
-==6991==         suppressed: 0 bytes in 0 blocks
-==6991== 
-==6991== For lists of detected and suppressed errors, rerun with: -s
-==6991== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+==7434== Memcheck, a memory error detector
+==7434== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7434== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==7434== Command: ./a.out set_and_get
+==7434== 
+==7434== 
+==7434== HEAP SUMMARY:
+==7434==     in use at exit: 400 bytes in 1 blocks
+==7434==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==7434== 
+==7434== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==7434==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7434==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
+==7434==    by 0x4013B7: set_and_get() (in /home/mrussell/test/a.out)
+==7434==    by 0x4017AA: main (in /home/mrussell/test/a.out)
+==7434== 
+==7434== LEAK SUMMARY:
+==7434==    definitely lost: 400 bytes in 1 blocks
+==7434==    indirectly lost: 0 bytes in 0 blocks
+==7434==      possibly lost: 0 bytes in 0 blocks
+==7434==    still reachable: 0 bytes in 0 blocks
+==7434==         suppressed: 0 bytes in 0 blocks
+==7434== 
+==7434== For lists of detected and suppressed errors, rerun with: -s
+==7434== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 
 
 ===============================================================================
