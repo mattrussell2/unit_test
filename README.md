@@ -24,7 +24,7 @@ With unit_test, here's an example unit testing file for Foo.
 
 ```cpp
 /*
- * Foo_tests.cpp
+ * unit_tests.h
  * unit tests for the Foo class.
  */
 #include <cassert>
@@ -50,39 +50,32 @@ And the output of unit_test:
 ```
 matt:example$ unit_test
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ compiling tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+clang++ unit_test_driver.o 
 
-setting up tests
------------------------------------
-tests were set up successfully
+--> tests compiled successfully
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ running tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+100%|█████████████████████████████████████████████| 3/3 [00:01<00:00,  2.08it/s]
 
-compiling tests
------------------------------------
-compilation passed
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for passing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ test report @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-constructor
------------------------------------
-test passed
-valgrind passed
-
-
-set test
------------------------------------
-test passed
-valgrind passed
-
-
-set and get
------------------------------------
-test passed
-valgrind passed
-
-
-results
------------------------------------
-3 / 3 tests passed
-3 / 3 valgrind tests passed
+                          name    passed?   valgrind passed?   diff passed?
+passing tests
+                   constructor       y              y                  
+                      set_test       y              y                  
+                   set_and_get       y              y                  
+failing tests
 ```
 
 Now, let's introduce a bug into our Foo class
@@ -108,43 +101,40 @@ The output of unit_test reads:
 ```
 matt:example$ unit_test
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ compiling tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+clang++ unit_test_driver.o 
 
-setting up tests
------------------------------------
-tests were set up successfully
+--> tests compiled successfully
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ running tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+100%|█████████████████████████████████████████████| 3/3 [00:01<00:00,  2.04it/s]
 
-compiling tests
------------------------------------
-compilation passed
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for passing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-
-constructor
------------------------------------
-test passed
-valgrind passed
-
-
-set test
------------------------------------
-test passed
-valgrind passed
-
-
-set and get
------------------------------------
-test failed
-valgrind failed by default
-stderr
-------
-a.out: Foo_tests.cpp:27: void set_and_get(): Assertion `f.get() == 10' failed.
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for failing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+=== set_and_get ===
+-stderr-
+a.out: ./unit_tests.h:20: void set_and_get(): Assertion `f.get() == 10' failed.
 
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ test report @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-results
------------------------------------
-2 / 3 tests passed
-2 / 3 valgrind tests passed
+                          name    passed?   valgrind passed?   diff passed?
+passing tests
+                   constructor       y              y                  
+                      set_test       y              y                  
+failing tests
+                   set_and_get       n              n                  
 ```
 
 Let's go ahead and introduce a memory leak in the constructor!
@@ -170,97 +160,113 @@ Fortunately, unit_test doesn't let us get away with this madness!
 ```
 matt:example$ unit_test
 
-setting up tests
------------------------------------
-tests were set up successfully
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ compiling tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+clang++ unit_test_driver.o 
+
+--> tests compiled successfully
+
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ running tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+100%|█████████████████████████████████████████████| 3/3 [00:01<00:00,  2.05it/s]
+
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for failing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+-valgrind stderr-
+==6974== Memcheck, a memory error detector
+==6974== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==6974== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==6974== Command: ./a.out constructor
+==6974== 
+==6974== 
+==6974== HEAP SUMMARY:
+==6974==     in use at exit: 400 bytes in 1 blocks
+==6974==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==6974== 
+==6974== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6974==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6974==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
+==6974==    by 0x401330: constructor() (in /home/mrussell/test/a.out)
+==6974==    by 0x4017AA: main (in /home/mrussell/test/a.out)
+==6974== 
+==6974== LEAK SUMMARY:
+==6974==    definitely lost: 400 bytes in 1 blocks
+==6974==    indirectly lost: 0 bytes in 0 blocks
+==6974==      possibly lost: 0 bytes in 0 blocks
+==6974==    still reachable: 0 bytes in 0 blocks
+==6974==         suppressed: 0 bytes in 0 blocks
+==6974== 
+==6974== For lists of detected and suppressed errors, rerun with: -s
+==6974== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+-valgrind stderr-
+==6978== Memcheck, a memory error detector
+==6978== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==6978== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==6978== Command: ./a.out set_test
+==6978== 
+==6978== 
+==6978== HEAP SUMMARY:
+==6978==     in use at exit: 400 bytes in 1 blocks
+==6978==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==6978== 
+==6978== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6978==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6978==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
+==6978==    by 0x401357: set_test() (in /home/mrussell/test/a.out)
+==6978==    by 0x4017AA: main (in /home/mrussell/test/a.out)
+==6978== 
+==6978== LEAK SUMMARY:
+==6978==    definitely lost: 400 bytes in 1 blocks
+==6978==    indirectly lost: 0 bytes in 0 blocks
+==6978==      possibly lost: 0 bytes in 0 blocks
+==6978==    still reachable: 0 bytes in 0 blocks
+==6978==         suppressed: 0 bytes in 0 blocks
+==6978== 
+==6978== For lists of detected and suppressed errors, rerun with: -s
+==6978== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+-valgrind stderr-
+==6991== Memcheck, a memory error detector
+==6991== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==6991== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==6991== Command: ./a.out set_and_get
+==6991== 
+==6991== 
+==6991== HEAP SUMMARY:
+==6991==     in use at exit: 400 bytes in 1 blocks
+==6991==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
+==6991== 
+==6991== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6991==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6991==    by 0x401845: Foo::Foo() (in /home/mrussell/test/a.out)
+==6991==    by 0x4013B7: set_and_get() (in /home/mrussell/test/a.out)
+==6991==    by 0x4017AA: main (in /home/mrussell/test/a.out)
+==6991== 
+==6991== LEAK SUMMARY:
+==6991==    definitely lost: 400 bytes in 1 blocks
+==6991==    indirectly lost: 0 bytes in 0 blocks
+==6991==      possibly lost: 0 bytes in 0 blocks
+==6991==    still reachable: 0 bytes in 0 blocks
+==6991==         suppressed: 0 bytes in 0 blocks
+==6991== 
+==6991== For lists of detected and suppressed errors, rerun with: -s
+==6991== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 
 
-compiling tests
------------------------------------
-compilation passed
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ test report @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-
-constructor
------------------------------------
-test passed
-valgrind failed
-==6477== Memcheck, a memory error detector
-==6477== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==6477== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==6477== Command: ./a.out constructor
-==6477== 
-==6477== 
-==6477== HEAP SUMMARY:
-==6477==     in use at exit: 400 bytes in 1 blocks
-==6477==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
-==6477== 
-==6477== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
-==6477==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==6477==    by 0x4039E5: Foo::Foo() (in /home/matt/unit_test/example/a.out)
-==6477==    by 0x4038B0: constructor() (in /home/matt/unit_test/example/a.out)
-==6477==    by 0x401506: main (in /home/matt/unit_test/example/a.out)
-==6477== 
-==6477== LEAK SUMMARY:
-==6477==    definitely lost: 400 bytes in 1 blocks
-==6477==    indirectly lost: 0 bytes in 0 blocks
-==6477==      possibly lost: 0 bytes in 0 blocks
-==6477==    still reachable: 0 bytes in 0 blocks
-==6477==         suppressed: 0 bytes in 0 blocks
-==6477== 
-==6477== For lists of detected and suppressed errors, rerun with: -s
-==6477== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
-
-
-
-set test
------------------------------------
-test passed
-valgrind failed
-==6479== Memcheck, a memory error detector
-==6479== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==6479== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==6479== Command: ./a.out set_test
-==6479== 
-==6479== 
-==6479== HEAP SUMMARY:
-==6479==     in use at exit: 400 bytes in 1 blocks
-==6479==   total heap usage: 5 allocs, 4 frees, 73,320 bytes allocated
-==6479== 
-==6479== 400 bytes in 1 blocks are definitely lost in loss record 1 of 1
-==6479==    at 0x483C583: operator new[](unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==6479==    by 0x4039E5: Foo::Foo() (in /home/matt/unit_test/example/a.out)
-==6479==    by 0x4038D7: set_test() (in /home/matt/unit_test/example/a.out)
-==6479==    by 0x401506: main (in /home/matt/unit_test/example/a.out)
-==6479== 
-==6479== LEAK SUMMARY:
-==6479==    definitely lost: 400 bytes in 1 blocks
-==6479==    indirectly lost: 0 bytes in 0 blocks
-==6479==      possibly lost: 0 bytes in 0 blocks
-==6479==    still reachable: 0 bytes in 0 blocks
-==6479==         suppressed: 0 bytes in 0 blocks
-==6479== 
-==6479== For lists of detected and suppressed errors, rerun with: -s
-==6479== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
-
-
-
-set and get
------------------------------------
-test failed
-valgrind failed by default
-stderr
-------
-a.out: Foo_tests.cpp:27: void set_and_get(): Assertion `f.get() == 10' failed.
-
-
-
-results
------------------------------------
-2 / 3 tests passed
-0 / 3 valgrind tests passed
-
-
-matt:example$ 
+                          name    passed?   valgrind passed?   diff passed?
+passing tests
+failing tests
+                   constructor       y              n                  
+                      set_test       y              n                  
+                   set_and_get       y              n                  
 ```
 
 Let's fix the memory leak, and use print statements to help catch our other bug.
@@ -296,58 +302,51 @@ stdout and stderr are captured during runtime and will be printed to the termina
 ```
 matt:example$ unit_test
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ compiling tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+clang++ unit_test_driver.o 
 
-setting up tests
------------------------------------
-tests were set up successfully
+--> tests compiled successfully
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ running tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+100%|█████████████████████████████████████████████| 3/3 [00:01<00:00,  2.01it/s]
 
-compiling tests
------------------------------------
-compilation passed
-
-
-constructor
------------------------------------
-test passed
-valgrind passed
-
-
-set test
------------------------------------
-test passed
-stdout
-------
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for passing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+=== set_test ===
+-stdout-
 entered set
-the value of x is 10
+the value of x is: 10
 the value of my value is: 50
 
-valgrind passed
 
-
-set and get
------------------------------------
-test failed
-valgrind failed by default
-stdout
-------
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for failing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+=== set_and_get ===
+-stdout-
 entered set
-the value of x is 10
+the value of x is: 10
 the value of my value is: 50
 
-stderr
-------
-a.out: Foo_tests.cpp:27: void set_and_get(): Assertion `f.get() == 10' failed.
+-stderr-
+a.out: ./unit_tests.h:20: void set_and_get(): Assertion `f.get() == 10' failed.
 
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ test report @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-results
------------------------------------
-2 / 3 tests passed
-2 / 3 valgrind tests passed
-
-
-matt:example$ 
+                          name    passed?   valgrind passed?   diff passed?
+passing tests
+                   constructor       y              y                  
+                      set_test       y              y                  
+failing tests
+                   set_and_get       n              n                  
 ```
 
 What happens if our code crashes? Let's manually raise a segfault in get()
@@ -383,52 +382,36 @@ all tests.
 ```
 matt:example$ unit_test
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ compiling tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+clang++ unit_test_driver.o 
 
-setting up tests
------------------------------------
-tests were set up successfully
+--> tests compiled successfully
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ running tests @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
+100%|█████████████████████████████████████████████| 3/3 [00:01<00:00,  2.04it/s]
 
-compiling tests
------------------------------------
-compilation passed
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for passing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@ test output for failing tests @@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-constructor
------------------------------------
-test passed
-valgrind passed
+===============================================================================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ test report @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================
 
-
-set test
------------------------------------
-test passed
-valgrind passed
-
-
-set and get
------------------------------------
-test failed
-segmentation fault!
-
-
-Try carefully commenting out sections of code and
-re-running unit_test until you find the *exact* line that is
-the cause of the problem. Then, look at the values of the
-variables in the context that they are being used. Then,
-find which one(s) is/are attempting to read or write to an
-illegal memory location.
-
-valgrind failed by default
-
-
-results
------------------------------------
-2 / 3 tests passed
-2 / 3 valgrind tests passed
-
-
-matt:example$ 
+                          name    passed?   valgrind passed?   diff passed?
+passing tests
+                   constructor       y              y                  
+                      set_test       y              y                  
+failing tests
+                   set_and_get       n              n                  
 ```
 
 ## prerequisites 
@@ -472,37 +455,26 @@ testing files in your working directory, each containing test functions. Further
 be a Makefile which follows a few simple rules. Details follow below. 
 
 ### test file
-unit_test requires one or more testing files of the form XX_tests.cpp in your working directory
+unit_test requires a testing file named `unit_tests.h` in your working directory
 
 ### test functions
 Each test in a test file must be a function which has  
   1) a void return type  
   2) no input arguments
 
-Each test, even accross multiple testing files, must have a unique name. 
+Each test must have a unique name. 
 
 ### Makefile
 unit_test requires a Makefile with a target named 'unit_test', which must require a file
-main.cpp (or main.o), and which will build an executable 'a.out'. 
+`unit_test_driver.o`, and which will build an executable 'a.out'. 
 
 For example, the Makefile rule to test the Foo class with unit_test could be:  
-
-    unit_test: main.cpp Foo_tests.cpp Foo.h  
-        clang++ main.cpp Foo_tests.cpp
-
-Or, of course:
-
-    unit_test: main.o Foo_tests.o   
-        clang++ main.o Foo_tests.o
-
-In the second example, you'll need to write your own rule for compiling main.cpp -> main.o. 
-main.cpp has no dependencies.
-
-#### NOTE 
-**The file main.cpp is created for you by unit_test - this file has the testing 
-program's main(), so there is no need for you to write a main(). Instead, think of your test
-functions as each being its own main. For details on this see below. To be clear, when 
-using unit_test, you do NOT need to run 'make', create main.cpp, or create a main()**
+```
+unit_test: unit_test_driver.o Foo_tests.cpp Foo.h  
+    clang++ unit_test_driver.o  Foo_tests.cpp
+```
+Note that `unit_test` builds `unit_test_driver.o` for you! This file has `int main()`
+inside of it - so do **not** add a `main` function!
 
 ## testing notes
 A test is considered successful upon successful completion of the test function. 
@@ -513,13 +485,7 @@ Upon successful completion of a test, it will immediately be rerun with valgrind
 
 Any test that fails will fail valgrind by default. 
 
-You can run **unit_test -f** to force valgrind to run on failed test. 
-
-Valgrind is run with --leak-check=full and --show-leak-kinds=all by default. 
-
-Run **unit_test -v** to run valgrind in verbose mode. 
-
-After each test, the output of stdout and stderr are printed to the terminal if not empty. 
+Run **unit_test -h** to see options. 
 
 ## unit_test implementation details 
 
@@ -538,7 +504,7 @@ Each pair is inserted in the driver file text as part of the initialization of a
 std::map<std::string, FnPtr>> object, where "FnPtr" is a typdef of a 
 pointer to a void function that takes no arguments.
 
-The driver file, main.cpp, is then saved in the current working directory.
+The driver file, `unit_test_driver.o`, is then saved in the current working directory.
 
 The files are compiled in accordance with the Makefile, and a.out is run 
 one time for each test via the Python subprocess module. 
