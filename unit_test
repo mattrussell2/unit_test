@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/sup/bin/python
 """
     unit_test
 
@@ -37,13 +37,11 @@
             std::cout << a[0];
         }
 
-    unit testing assignments must be built with our driver file
+    unit testing assignments must be linked with the testing driver file
         
         unit_test_driver.cpp
 
-    This script creates this file and adapts the Makefile to compile all
-    student .cpp files not named '(anything_here_)main(.cpp)' and link them
-    with this file.
+    This script creates this file and compiles it. 
 """
 import sys
 import os
@@ -53,14 +51,18 @@ import subprocess
 from pathlib import Path
 import argparse as ap
 from tqdm import tqdm
+from tqdm.contrib.concurrent import process_map
+from multiprocessing import cpu_count
 
 ap = ap.ArgumentParser()
-ap.add_argument('-n',  '--test-names',            metavar=("testa", "testb"), required=False, nargs='+', help="list of one or more specific test(s) to run")
-ap.add_argument('-o',  '--output-mode',           action='store_true',        required=False,            help="run in output mode (no test summary)")
-ap.add_argument('-r',  '--report-only',           action='store_true',        required=False,            help="only report on test results (no test output)")
-ap.add_argument('-d',  '--diff-so-fancy',         action='store_true',        required=False,            help="run diffs with diff-so-fancy")
-ap.add_argument('-v',  '--show-valgrind-on-fail', action='store_true',        required=False,            help="show valgrind results on regular test failure")
-ap.add_argument('-vv', '--always-show-valgrind',  action='store_true',        required=False,            help="always show valgrind results, even on valgrind test pass")
+ap.add_argument('-n',  '--test-names',            metavar=("testa", "testb"), required=False, help="list of one or more specific test(s) to run", nargs='+')
+ap.add_argument('-o',  '--output-mode',           action='store_true',        required=False, help="run in output mode (no test summary)")
+ap.add_argument('-r',  '--report-only',           action='store_true',        required=False, help="only report on test results (no test output)")
+ap.add_argument('-d',  '--diff-so-fancy',         action='store_true',        required=False, help="run diffs with diff-so-fancy")
+ap.add_argument('-v',  '--show-valgrind-on-fail', action='store_true',        required=False, help="show valgrind results on regular test failure")
+ap.add_argument('-vv', '--always-show-valgrind',  action='store_true',        required=False, help="always show valgrind results, even on valgrind test pass")
+ap.add_argument('-t',  '--timeout-time',          type=int,                   required=False, help="timeout time in seconds", default=30)
+ap.add_argument('-j',  '--jobs',                  type=int,                   required=False, help="number of parallel jobs to run (defaults to number of available cores)", default=cpu_count())
 args = vars(ap.parse_args())
 
 
@@ -69,7 +71,7 @@ STDIN_DIR     = 'stdin/'
 STDOUT_DIR    = 'stdout/'
 EXEC          = 'a.out'
 MAKE_TARGET   = 'unit_test'
-TIMEOUT       = '30'
+TIMEOUT       = str(args['timeout_time'])
 DIFFCMD       = ["diff"]
 if args['diff_so_fancy']: DIFFCMD.extend(['-u'])
 
@@ -196,7 +198,7 @@ def RUN(cmd_ary, stdin=TMPFILE):
         Notes:
             if no stdin argument, use temporary file as fake stdin.
             Always capture output and use universal newlines.
-            Always add a timeout argument of length specified in config.ini
+            Always add a timeout argument of length specified by TIMEOUT.
     """
     cmd_ary = ["timeout", TIMEOUT] + cmd_ary
     with open(stdin, 'r') as infile:
@@ -210,7 +212,10 @@ def extract_test_names():
             test names (list (strings)) : names of the tests
 
         Notes:
-            test names come from from unit test file unit_tests.h        
+            test names come from from unit test file unit_tests.h       
+            invariant is that test function are of the form:
+                void xxxxxx() { ... }
+            where xxxxxx is the test name.
     """
     TESTS_FILE = Path(UTESTFILE).read_text()
     CMTD_REGEX = r"\/\*([\s\S]*?)\*\/\s*|\s*\/\/.*\n*"
@@ -228,21 +233,21 @@ def create_driver_file(TEST_NAMES):
 
     Parameters:
         TEST_NAMES list(string) : list of the names of the tests of the form
-                                :  "{ string, void (*FnPtr)() },"
+                                
     Returns:
         none
 
     Effects:
         updates the DRIVERFILE in the cwd with the tests.
+        Inserts each test name as a string of the form:
+                { "test_name", test_name },
+        where the string "test_name" maps to the associated test function test_name in unit_tests.h.
+                                  
         after this function runs, and you compile, you can run each test with:
             ./a.out test_name
     """
-    TEST_PAIRS = "\n".join(['\t{ "%s", %s },' % (name, name)
-                            for name in TEST_NAMES])
-    INSERT_LOC = (
-        DRIVERCONTENTS.index(
-            "    std::map<std::string, FnPtr> tests {") + 1
-    )
+    TEST_PAIRS = "\n".join(['\t{ "%s", %s },' % (name, name) for name in TEST_NAMES])
+    INSERT_LOC = DRIVERCONTENTS.index("    std::map<std::string, FnPtr> tests {") + 1
     DRIVERCONTENTS.insert(INSERT_LOC, TEST_PAIRS)
     Path(DRIVERFILE).write_text("\n".join(DRIVERCONTENTS))
 
@@ -258,6 +263,9 @@ def compile_driver():
 
     Effects:
         removes DRIVERFILE after creating unit_test_driver.o
+    
+    TODO: we don't necessarily want to force these options for compiling the driver. 
+    TODO: make the driver filename configuarable.    
     """
     return RUN(['clang++', '-std=c++14', '-c', '-Wall', '-Wextra', DRIVERFILE, '-o', \
                 'unit_test_driver.o'])
@@ -278,10 +286,7 @@ class Test:
 
             solution stdout files are located in STDOUT_DIR
             solution stdout files have the same as the test
-
-        Returns:
-            a test dictionary
-
+        
         """
         self.name             = name
         self.hr_name          = " ".join(name.split("_"))
@@ -305,21 +310,23 @@ def test_passed(test):
     return test.standard_test.returncode == 0 and \
           (test.diff_test == None or test.diff_test.returncode == 0)
 
+def test_timed_out(test):
+    return test.standard_test.returncode == 124
+
+def valgrind_timed_out(test):
+    return test.valgrind_test.returncode == 124
 
 def valgrind_passed(test):
-    """ report whether the valgrind test passed. assumes valgrind test has been run. """
+    """ assumes valgrind test has been run. """
     return test.valgrind_test.returncode == 0
-
 
 def stdin_exists(test):
     """ return true if a stdin file exists for this test """
     return test.stdinFile != TMPFILE
 
-
 def solution_stdout_exists(test):
     """ return true if a solution stdout file exists for this test """
     return test.solution_stdoutFile != TMPFILE
-
 
 def run_diff(test):
     """
@@ -335,8 +342,7 @@ def run_diff(test):
         Writes student output to a file named student_stdout
 
     Notes:
-        If custom output file is specified, diff that with solution as well
-        If IGNORE_WSPACE from config.ini, run diff -wB
+        If custom output file is specified, diff that with solution as well        
     """
     Path("student_stdout").write_text(test.standard_test.stdout)
     
@@ -390,9 +396,6 @@ def run_test(test):
     if test.standard_test.returncode == 0 and solution_stdout_exists(test):
         test = run_diff(test)
 
-    if 'timeout:' in test.standard_test.stderr:
-        test.standard_test.stderr = test.standard_test.stderr.split('timeout:')[0]
-
     return test
 
 
@@ -417,7 +420,6 @@ def run_valgrind(test):
         "--error-exitcode=1",  # errors/leaks return 1
         "./" + EXEC,
     ]
-
     valgrind_command.append(test.name)
     
     test.valgrind_test = RUN(valgrind_command, stdin=test.stdinFile)
@@ -430,7 +432,7 @@ def compile_tests():
     compile the target executable
 
     Prerequisites:
-        MAKE_TARGET and EXEC set in config.ini
+        MAKE_TARGET and EXEC are set
 
     Parameters:
         None
@@ -444,7 +446,7 @@ def compile_tests():
         compilation_result.stderr = "Executable produced by 'make unit_test' must be named: " + EXEC
         compilation_result.returncode = 1
 
-    # for some reason, g++ doesn't always play nice, so chmod the executable
+    # for some reason g++ doesn't always play nice, so chmod the executable
     chmod_result = RUN(["chmod", "u+x", EXEC])
     
     return compilation_result
@@ -461,11 +463,7 @@ def prepare_tests():
             and exit(1)
     """
     HEADER("compiling tests") 
-    # INFORM("{:^80}".format("==============================================="), color=INFO)
-    # INFORM("{:^80}".format("@@@@@@@@@@@@@@@ compiling tests @@@@@@@@@@@@@@@"), color=INFO)
-    # INFORM("{:^80}".format("==============================================="), color=INFO)
-    # #INFORM("=== compiling tests ===", color=INFO)
-    
+        
     test_names = extract_test_names()
 
     create_driver_file(test_names)
@@ -496,13 +494,8 @@ def prepare_tests():
 
 # this is something of a hot mess. :) 
 def report_results(tests):              
-    passed_tests = [tests[name] for name, test in tests.items() if test_passed(test) and valgrind_passed(test)]
-    failed_tests = [tests[name] for name, test in tests.items() if test not in passed_tests]
-    
-    # valgrind_passed_tests = [tests[name] for name, test in tests.items() if valgrind_passed(test)]
-    # valgrind_failed_tests = [tests[name] for name, test in tests.items() if test_passed(test) and not valgrind_passed(test)]
-    
-    # valgrind_failed_by_default     = [tests[name] for name, test in tests.items() if name in failed_tests]
+    passed_tests = [test for test in tests if test_passed(test) and valgrind_passed(test)]
+    failed_tests = [test for test in tests if test not in passed_tests]
     
     if not args["report_only"]:
         if passed_tests:
@@ -524,20 +517,24 @@ def report_results(tests):
         if failed_tests:
             HEADER("test output for failing tests")    
             for test in failed_tests:            
-                if test.standard_test.stdout or test.standard_test.stderr:                
+                if test.standard_test.stdout or test.standard_test.stderr or \
+                    test.diff_test or test.standard_test.returncode == 11 or \
+                    not valgrind_passed(test) or args['always_show_valgrind']:                
+                    
                     INFORM(f"=== {test.name} ===", color=INFO)
-                    if test.standard_test.stdout:
-                        INFORM('-stdout-', color=INFO)
-                        INFORM(test.standard_test.stdout, color=FAILURE)               
-                    if test.standard_test.stderr:
-                        INFORM('-stderr-', color=INFO)
-                        INFORM(test.standard_test.stderr, color=FAILURE)
+                    
+                if test.standard_test.stdout:
+                    INFORM('-stdout-', color=INFO)
+                    INFORM(test.standard_test.stdout, color=FAILURE)               
+                if test.standard_test.stderr:
+                    INFORM('-stderr-', color=INFO)
+                    INFORM(test.standard_test.stderr, color=FAILURE)
 
-                    if  'utf-8' in test.standard_test.stderr or \
-                        'utf-8' in test.standard_test.stdout:
-                        INFORM("this test has encountered undefined behavior in your code,\n" + \
-                            "which caused your program to crash. This is likely\n" + \
-                            "due to uninitialized variable access.", color=FAILURE)
+                if  'utf-8' in test.standard_test.stderr or \
+                    'utf-8' in test.standard_test.stdout:
+                    INFORM("this test has encountered undefined behavior in your code,\n" + \
+                        "which caused your program to crash. This is likely\n" + \
+                        "due to uninitialized variable access.", color=FAILURE)
             
                 if test.diff_test:
                     INFORM('-diff test result-', color=INFO)
@@ -569,10 +566,14 @@ def report_results(tests):
         result = [test.name]
         
         if test_passed(test):                  result.append("y")
-        else:                                  result.append("n")
+        else:
+            if test_timed_out(test):           result.append("t")
+            else:                              result.append("n")
         
         if valgrind_passed(test):              result.append("y ")
-        else:                                  result.append("n ")
+        else:
+            if valgrind_timed_out(test):       result.append("t ")
+            else:                              result.append("n ")
         
         if not test.diff_test:                 result.append(" ")
         else: 
@@ -588,6 +589,12 @@ def cleanup():
         if f in os.listdir('./'):
             os.remove(f)
     
+def run_test_with_valgrind(test_name):
+    test = Test(test_name)
+    test = run_test(test)
+    test = run_valgrind(test)
+    return test
+
 if __name__ == "__main__":
     tests = {}
 
@@ -601,15 +608,7 @@ if __name__ == "__main__":
                 exit(1)    
         test_names = args['test_names']
 
-    HEADER("running tests")
-
-    for name in tqdm(test_names, ncols=80):        
-        test = Test(name)
-        test = run_test(test)               
-        test = run_valgrind(test)
-
-        tests[test.hr_name] = test
-                
+    HEADER("running tests")    
+    tests = process_map(run_test_with_valgrind, test_names, max_workers = args['jobs'])                     
     report_results(tests)
-    
     cleanup()
